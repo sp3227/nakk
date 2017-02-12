@@ -29,7 +29,7 @@ dependencies {
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'com.commit451:PhotoView:1.2.4'
     compile 'com.google.android.gms:play-services:7.5.+'
-    // testCompile 'junit:junit:4.12'
+     testCompile 'junit:junit:4.12'
     compile files('libs/libDaumMapAndroid.jar')
 }
 
