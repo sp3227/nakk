@@ -7,4 +7,7 @@
     <color name="colorSora">#01bfd7</color>
 
     <color name="push">#ffffff</color>
+
+    <color name="location_ins1">#777777</color>
+    <color name="location_ins2">#fa0175</color>
 </resources>

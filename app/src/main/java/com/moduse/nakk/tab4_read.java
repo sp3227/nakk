@@ -9,13 +9,13 @@ import android.widget.LinearLayout;
  * Created by sejung on 2017-02-11.
  */
 
-public class tab4_read extends Activity
+public class Tab4_read extends Activity
 {
 
     public LinearLayout in_layout;
     public LayoutInflater Inflater;
 
-    tab4_read()
+    Tab4_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
         Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
