@@ -322,7 +322,7 @@ public class Signup extends AppCompatActivity
                     String email = (String)params[5];
 
 
-                    Log.i("result "," /push :"+push+" /id :"+id+" /pass :"+pass+" /device :"+device+" /nickname :"+nickname+" /email :"+email);
+                   // Log.i("result "," /push :"+push+" /id :"+id+" /pass :"+pass+" /device :"+device+" /nickname :"+nickname+" /email :"+email);
                     // Log.i("TAG","device_id :"+device_id +"\nid :"+id+"\npass :"+pass+"\nname :"+name+"\naddress :"+address+"\nage :"+age);
 
                     list.add(new BasicNameValuePair("user_push",push));
