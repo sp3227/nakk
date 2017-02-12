@@ -3,6 +3,7 @@ package com.moduse.nakk;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +21,10 @@ public class Main extends Activity
     ProgressDialog loading;   // 프로그레스 설정
 
     // 탭 JAVA 선언
-    public tab1_read tab1_;
-    public tab2_read tab2_;
-    public tab3_read tab3_;
-    public tab4_read tab4_;
+    public Tab1_read tab1_;
+    public Tab2_read tab2_;
+    public Tab3_read tab3_;
+    public Tab4_read tab4_;
 
     LinearLayout add_Linear;  // 내부 삽입 레이아웃
     LayoutInflater Inflater;
@@ -55,10 +56,10 @@ public class Main extends Activity
 
         Inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        tab1_ = new tab1_read();
-        tab2_ = new tab2_read();
-        tab3_ = new tab3_read();
-        tab4_ = new tab4_read();
+        tab1_ = new Tab1_read();
+        tab2_ = new Tab2_read();
+        tab3_ = new Tab3_read();
+        tab4_ = new Tab4_read();
 
 
         // 초기 1번탭 처음 실행
@@ -108,6 +109,14 @@ public class Main extends Activity
         add_Linear.addView(tab4_.in_layout);
 
         tab4_.init_tab4();
+    }
+
+    public void View_ZoomImage(String imgurl)
+    {
+        Intent intent = new Intent(Main.this,View_img.class);
+        intent.putExtra("ImuUrl",imgurl);
+        startActivity(intent);
+
     }
 
 

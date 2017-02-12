@@ -30,7 +30,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by sejung on 2017-02-11.
  */
 
-public class tab1_read extends Activity
+public class Tab1_read extends Activity
 {
 
     public LinearLayout in_layout;
@@ -45,7 +45,7 @@ public class tab1_read extends Activity
     private CustomAdapter customAdapter = null;
 
 
-    tab1_read()
+    Tab1_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
         Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -242,6 +242,15 @@ public class tab1_read extends Activity
                     // 이미지 있음
                     holder.View_img.setVisibility(View.VISIBLE);
                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    // 사진 클릭 리스너
+                    holder.View_img.setOnClickListener(new ImageView.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            ((Main) Main.MinContext).View_ZoomImage(data.GET_talk_img());
+                        }
+                    });
                 }
                 // 자랑하기 글 부분
                 holder.View_data.setText(data.GET_talk_data());
@@ -273,16 +282,14 @@ public class tab1_read extends Activity
                 {
                     // 이미지 있음
                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
-
+                    // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
                         @Override
                         public void onClick(View v)
                         {
-                            //((Main) Main.MainContext).View_ZoomImage(data.getimg());
+                            ((Main) Main.MinContext).View_ZoomImage(data.GET_user_profile());
                         }
-
-
                     });
                 }
 
