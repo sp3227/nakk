@@ -58,7 +58,7 @@
                         android:layout_marginRight="8dp"
                         android:layout_marginLeft="5dp"
                         android:gravity="center"
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:text="글쓰기"
                         android:textSize="18dp"
@@ -76,7 +76,8 @@
     <ListView
         android:id="@+id/tab1_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:dividerHeight="10dp">
 
     </ListView>
 

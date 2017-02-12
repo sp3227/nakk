@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ public class Main extends Activity
     LinearLayout add_Linear;  // 내부 삽입 레이아웃
     LayoutInflater Inflater;
 
+    //디바이스 ID  GET
+    public TelephonyManager manager;
 
     //레이아웃 선언
     ImageView adView;      // 배너
@@ -70,7 +73,7 @@ public class Main extends Activity
         tab1_.init_tab1();
 
         adView = (ImageView) findViewById(R.id.adView);  // 애드 뷰 (광고 배너)
-        Glide.with(this.getApplicationContext()).load(R.drawable.banner).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(adView);
+        //Glide.with(this.getApplicationContext()).load(R.drawable.banner).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(adView);
     }
 
     // TAB 버튼 세팅
@@ -119,7 +122,21 @@ public class Main extends Activity
 
     }
 
+    public String Get_DeviceID()
+    {
+        try
+        {
+            // 디바이스 ID 검사
+            manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            return manager.getDeviceId();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
 
+            return null;
+        }
+    }
 
     // 프로그레스 설정
     public void InitShow()

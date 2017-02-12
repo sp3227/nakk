@@ -2,7 +2,10 @@ package com.moduse.nakk;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,12 +49,15 @@ public class Tab1_read extends Activity
     private CustomAdapter customAdapter = null;
 
 
+
     Tab1_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
         Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab1, null);
+
+        list = (ListView) in_layout.findViewById(R.id.tab1_listview);  // 리스트 레이아웃 부분 설정
     }
 
     public void init_tab1()
@@ -61,6 +68,7 @@ public class Tab1_read extends Activity
         downsever.execute(appInfo.Get_Tab1_TalkInselectURL());  // URL 삽입
 
         // 받은 데이터 초기화  (일단 무시)
+        listItem.clear();
     }
 
 
@@ -222,6 +230,7 @@ public class Tab1_read extends Activity
 
                 holder.View_user_nickname = (TextView) convertView.findViewById(R.id.tab1_item_nickname);
                 holder.View_user_profile = (ImageView) convertView.findViewById(R.id.tab1_item_prfileimg);
+                holder.View_delete = (LinearLayout) convertView.findViewById(R.id.tab1_item_delete);
 
                 convertView.setTag(holder);
             }
@@ -235,13 +244,13 @@ public class Tab1_read extends Activity
                 // 자랑하기 이미지 부분
                 if(data.GET_talk_img().equals("none") || data.GET_talk_img() == "" || data.GET_talk_img() == null)
                 {
-                    holder.View_img.setVisibility(View.GONE);
+                   // holder.View_img.setVisibility(View.INVISIBLE);
                 }
                 else
                 {
                     // 이미지 있음
-                    holder.View_img.setVisibility(View.VISIBLE);
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                   // holder.View_img.setVisibility(View.VISIBLE);
+                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().into(holder.View_img);
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
@@ -262,12 +271,14 @@ public class Tab1_read extends Activity
                 if(data.GET_talk_locationstate().equals("none") || data.GET_talk_img() == "" || data.GET_talk_img() == null)
                 {
                     holder.View_loactionstate.setText("비공개");
-                    holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins1));
+                    String strColor1 = "#777777";
+                    holder.View_loactionstate.setTextColor(Color.parseColor(strColor1));
                 }
                 else
                 {
+                    String strColor2 = "#fa0175";
                     holder.View_loactionstate.setText("공개");
-                    holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins2));
+                    holder.View_loactionstate.setTextColor(Color.parseColor(strColor2));
                 }
                 // 자랑하기 작성시간 부분
                 holder.View_writetime.setText(data.GET_talk_writetime());
@@ -276,14 +287,14 @@ public class Tab1_read extends Activity
                 // 자랑하기 작성자 프로필 사진 부분(클릭이벤트 필요)
                 if(data.GET_user_profile().equals("none") || data.GET_user_profile() == "" || data.GET_user_profile() == null)
                 {
-                    Glide.with(convertView.getContext()).load(R.drawable.textimg).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(R.drawable.textimg).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
                 }
                 else
                 {
                     // 이미지 있음
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
                     // 사진 클릭 리스너
-                    holder.View_img.setOnClickListener(new ImageView.OnClickListener()
+                    holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()
                     {
                         @Override
                         public void onClick(View v)
@@ -293,6 +304,16 @@ public class Tab1_read extends Activity
                     });
                 }
 
+                // 삭제 버튼 (자신 글만 삭제글)
+                if(data.GET_talk_writeid().toString().equals(((Main) Main.MinContext).Get_DeviceID()))
+                {
+                    holder.View_delete.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    holder.View_delete.setVisibility(View.GONE);
+                }
+                Log.i("user_device",((Main) Main.MinContext).Get_DeviceID());
                 customAdapter.notifyDataSetChanged();
             }
 
@@ -309,6 +330,7 @@ public class Tab1_read extends Activity
             TextView View_mentcount;
             TextView View_loactionstate;
             TextView View_writetime;
+            LinearLayout View_delete;
 
             TextView View_user_nickname;
             ImageView View_user_profile;
