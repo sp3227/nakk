@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +52,8 @@ public class Tab1_read extends Activity
         Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab1, null);
+
+        list = (ListView) in_layout.findViewById(R.id.tab1_listview);  // 리스트 레이아웃 부분 설정
     }
 
     public void init_tab1()
@@ -241,7 +244,7 @@ public class Tab1_read extends Activity
                 {
                     // 이미지 있음
                     holder.View_img.setVisibility(View.VISIBLE);
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.View_img);
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
@@ -262,12 +265,12 @@ public class Tab1_read extends Activity
                 if(data.GET_talk_locationstate().equals("none") || data.GET_talk_img() == "" || data.GET_talk_img() == null)
                 {
                     holder.View_loactionstate.setText("비공개");
-                    holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins1));
+                   // holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins1));
                 }
                 else
                 {
                     holder.View_loactionstate.setText("공개");
-                    holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins2));
+                    //holder.View_loactionstate.setTextColor(getResources().getColor(R.color.location_ins2));
                 }
                 // 자랑하기 작성시간 부분
                 holder.View_writetime.setText(data.GET_talk_writetime());
@@ -276,14 +279,14 @@ public class Tab1_read extends Activity
                 // 자랑하기 작성자 프로필 사진 부분(클릭이벤트 필요)
                 if(data.GET_user_profile().equals("none") || data.GET_user_profile() == "" || data.GET_user_profile() == null)
                 {
-                    Glide.with(convertView.getContext()).load(R.drawable.textimg).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(R.drawable.textimg).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
                 }
                 else
                 {
                     // 이미지 있음
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().thumbnail(0.3f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
                     // 사진 클릭 리스너
-                    holder.View_img.setOnClickListener(new ImageView.OnClickListener()
+                    holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()
                     {
                         @Override
                         public void onClick(View v)

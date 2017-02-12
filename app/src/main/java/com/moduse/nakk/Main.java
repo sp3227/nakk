@@ -70,7 +70,7 @@ public class Main extends Activity
         tab1_.init_tab1();
 
         adView = (ImageView) findViewById(R.id.adView);  // 애드 뷰 (광고 배너)
-        Glide.with(this.getApplicationContext()).load(R.drawable.banner).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(adView);
+        //Glide.with(this.getApplicationContext()).load(R.drawable.banner).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(adView);
     }
 
     // TAB 버튼 세팅
