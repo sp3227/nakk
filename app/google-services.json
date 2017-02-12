@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "948203713898",
+    "firebase_url": "https://nakk-94360.firebaseio.com",
+    "project_id": "nakk-94360",
+    "storage_bucket": "nakk-94360.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948203713898:android:d9a3479213703b1c",
+        "android_client_info": {
+          "package_name": "com.moduse.nakk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948203713898-n7fl3k1ltfl7gt6an2mf8fj7nfsfmde1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2hvwjuaEB5_FOyb8dE4j-J0PqffAf440"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948203713898-n7fl3k1ltfl7gt6an2mf8fj7nfsfmde1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
