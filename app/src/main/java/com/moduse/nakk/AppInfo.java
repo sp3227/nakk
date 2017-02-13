@@ -20,6 +20,12 @@ public class AppInfo
     //탭1 글 불러오기
     private String Tab1_TalkInselectURL ="http://nakk20.raonnet.com/php_data/jaraing_talk_select.php";
 
+    //탭1 글 삭제
+    private String Tab1_TalkdeleteURL ="http://nakk20.raonnet.com/php_data/jaraing_talk_delete.php";
+
+    //탭1 좋아요
+    private String Tab_TalklikeURL ="http://nakk20.raonnet.com/php_data/jaraing_like.php";
+
     // 다음맵 KEY
     private String DaumKey = "2f280f5013022107ebe4fcd0382e5b02";
 
@@ -39,6 +45,8 @@ public class AppInfo
     public String Get_LoginURL(){return LoginURL;}
     public String Get_SignUpURL(){return SignUpURL;}
     public String Get_Tab1_TalkInselectURL(){return Tab1_TalkInselectURL;}
+    public String Get_Tab1_TalkdeleteURL(){return Tab1_TalkdeleteURL;}
+    public String Get_Tab_TalklikeURL(){return Tab_TalklikeURL;}
 
 
 

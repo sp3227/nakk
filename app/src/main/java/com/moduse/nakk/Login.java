@@ -5,12 +5,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,6 +42,13 @@ public class Login extends AppCompatActivity {
     EditText user_id;
     EditText user_pass;
 
+    CheckBox loginsave;
+
+    SharedPreferences setting;
+
+    SharedPreferences.Editor editor;
+
+
     private InputMethodManager imm;
 
     @Override
@@ -53,12 +63,50 @@ public class Login extends AppCompatActivity {
 
         user_id = (EditText) findViewById(R.id.edit_userid);
         user_pass = (EditText) findViewById(R.id.edit_userpass);
+        loginsave = (CheckBox) findViewById(R.id.login_save);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);   // 키보드 관리 내리기 올리기 설정
 
         //초기화
-        user_id.setText("");
-        user_pass.setText("");
 
+        setting = getSharedPreferences("setting", 0);  // 자동 로그인 부분 설정
+        editor= setting.edit();
+
+        if(setting.getBoolean("Auto_Login_enabled",false))
+        {
+            user_id.setText(setting.getString("ID", ""));
+            user_pass.setText(setting.getString("PW", ""));
+            loginsave.setChecked(true);
+        }
+
+        loginsave.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if(isChecked)
+                {
+                    String ID = user_id.getText().toString();
+                    String PW = user_pass.getText().toString();
+
+                    editor.putString("ID", ID);
+                    editor.putString("PW", PW);
+                    editor.putBoolean("Auto_Login_enabled", true);
+                    editor.commit();
+                }
+                else
+                {
+                    /**
+                     * remove로 지우는것은 부분삭제
+                     * clear로 지우는것은 전체 삭제 입니다
+                     */
+//					editor.remove("ID");
+//					editor.remove("PW");
+//					editor.remove("Auto_Login_enabled");
+                    editor.clear();
+                    editor.commit();
+                }
+            }
+        });
     }
 
     public void btn_login(View v)
@@ -71,6 +119,11 @@ public class Login extends AppCompatActivity {
 
         // php 함수 호출
         Login_user(id,pass,appInfo.Get_LoginURL());
+
+        if(loginsave.isChecked())
+        {
+            setting = getSharedPreferences("logininit",0);
+        }
     }
 
     public void btn_signup (View v)

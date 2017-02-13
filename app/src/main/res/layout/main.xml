@@ -188,25 +188,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_alignParentBottom="true"
-                android:id="@+id/ad"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#333">
+
 
                 <ImageView
+                    android:layout_alignParentBottom="true"
                     android:id="@+id/adView"
                     android:adjustViewBounds="true"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content"/>
 
-            </LinearLayout>
+
 
             <LinearLayout
-                android:layout_above="@+id/ad"
+                android:layout_above="@+id/adView"
                 android:id="@+id/inLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -1,7 +1,5 @@
 package com.moduse.nakk;
 
-import java.util.SimpleTimeZone;
-
 /**
  * Created by sejung on 2017-02-11.
  */
@@ -12,6 +10,7 @@ public class TalkData
     private String talkimgURL ="http://nakk20.raonnet.com/talkimg/";
 
     private String idx;
+    private String talk_idx;
     private String talk_writeid;
     private String talk_img;
     private String talk_data;
@@ -26,10 +25,11 @@ public class TalkData
     private String user_nickname;
     private String user_profile;
 
-    public TalkData(String idx_, String writeid_, String img_, String data_, String likecount_, String mentcount_,
+    public TalkData(String idx_, String talk_idx_, String writeid_, String img_, String data_, String likecount_, String mentcount_,
                     String locationstate_, String latitude_, String longitude_, String writetime_, String user_id_, String user_nickname_, String user_profile_)
     {
         idx = idx_;
+        talk_idx = talk_idx_;
         talk_writeid = writeid_;
         talk_img = img_;
         talk_data = data_;
@@ -49,6 +49,7 @@ public class TalkData
     //GET
     public String GET_idx(){ return idx; }
     public String GET_talk_writeid(){ return talk_writeid; }
+    public String GET_talk_idx(){ return talk_idx; }
     public String GET_talk_img(){ return talkimgURL + talk_img; }
     public String GET_talk_data(){ return talk_data; }
     public String GET_talk_likecount(){ return talk_likecount; }
@@ -65,6 +66,7 @@ public class TalkData
 
     //SET
     public void SET_idx(String value){ idx = value; }
+    public void SET_talk_idx(String value){ talk_idx = value; }
     public void SET_talk_writeid(String value){ talk_writeid = value; }
     public void SET_talk_img(String value){ talk_img = value; }
     public void SET_talk_data(String value){ talk_data = value; }

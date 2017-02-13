@@ -1,8 +1,11 @@
 package com.moduse.nakk;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -29,6 +32,7 @@ public class Main extends Activity
 
     LinearLayout add_Linear;  // 내부 삽입 레이아웃
     LayoutInflater Inflater;
+    LinearLayout.LayoutParams layoutParams;
 
     //디바이스 ID  GET
     public TelephonyManager manager;
@@ -46,7 +50,7 @@ public class Main extends Activity
 
         loading = new ProgressDialog(Main.this);  // 프로그래스
         appInfo = new AppInfo();  // 데이터
-
+        layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         init_Layout();
 
     }
@@ -67,13 +71,15 @@ public class Main extends Activity
 
         // 초기 1번탭 처음 실행
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         add_Linear.removeAllViews();
-        add_Linear.addView(tab1_.in_layout);
+        add_Linear.addView(tab1_.in_layout,layoutParams);
 
         tab1_.init_tab1();
 
+        String adimg = "http://nakk20.raonnet.com/ad/default_banner.gif";
         adView = (ImageView) findViewById(R.id.adView);  // 애드 뷰 (광고 배너)
-        //Glide.with(this.getApplicationContext()).load(R.drawable.banner).asGif().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(adView);
+        Glide.with(this.getApplicationContext()).load(adimg).asGif().diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
     }
 
     // TAB 버튼 세팅
@@ -82,9 +88,9 @@ public class Main extends Activity
     {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
-        add_Linear.addView(tab1_.in_layout);
+        add_Linear.addView(tab1_.in_layout,layoutParams);
 
-        tab1_.init_tab1();
+        tab1_.all_tab1();
     }
 
     public void Btn_Tab_2(View v)   // 탭2  포인트
@@ -114,6 +120,12 @@ public class Main extends Activity
         tab4_.init_tab4();
     }
 
+
+/*
+
+///////////////// 탭 1  부분 //////////////////////
+ */
+
     public void View_ZoomImage(String imgurl)
     {
         Intent intent = new Intent(Main.this,View_img.class);
@@ -136,6 +148,45 @@ public class Main extends Activity
 
             return null;
         }
+    }
+
+    public void tab1_btn_category(View v)
+    {
+        showDialog(1);
+    }
+
+    // 타입별 불러오기  전체, 내글 (선택형 다이얼로그) 탭 1
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case 1:
+                final CharSequence[] item = {"전체", "내글"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("자랑 유형을 선택하세요.") // 제목 설정
+                        .setItems(item, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (item[i].toString().equals(item[0])) {
+                                    tab1_.all_tab1();   // 전체글
+                                } else if (item[i].toString().equals(item[1])) {
+                                    tab1_.my_tab1();  // 내글
+                                } else {
+                                    dialogInterface.dismiss();
+                                }
+                            }
+                        });
+
+                AlertDialog alert = builder.create();  //알림 객체 생성
+                return alert;
+        }
+        return null;
+    }
+
+    // 자랑하기 글쓰기
+    public void tab1_btn_write(View v)
+    {
+        Intent intent = new Intent(this.getApplicationContext(), Write_jarangTalk.class);
+        startActivity(intent);
     }
 
     // 프로그레스 설정
