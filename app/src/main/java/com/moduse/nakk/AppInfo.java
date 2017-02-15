@@ -26,6 +26,12 @@ public class AppInfo
     //탭1 좋아요
     private String Tab_TalklikeURL ="http://nakk20.raonnet.com/php_data/jaraing_like.php";
 
+    //탭3 유튜브
+    private String Tab3_YoutubeURL = "http://nakk20.raonnet.com/php_data/youtubelist.php";
+
+    //유튜브 키
+    private String YoutubeKey = "AIzaSyB6yor1mxzmpr3wga7c2MsNg_A9K2YYFJs";
+
     // 다음맵 KEY
     private String DaumKey = "2f280f5013022107ebe4fcd0382e5b02";
 
@@ -47,6 +53,10 @@ public class AppInfo
     public String Get_Tab1_TalkInselectURL(){return Tab1_TalkInselectURL;}
     public String Get_Tab1_TalkdeleteURL(){return Tab1_TalkdeleteURL;}
     public String Get_Tab_TalklikeURL(){return Tab_TalklikeURL;}
+
+
+    public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}
+    public String Get_Tab3_YoutubeKey(){return YoutubeKey;}
 
 
 

@@ -66,12 +66,16 @@ public class Tab1_read extends Activity
     String talk_type;
     int last_list_number;
 
-
+    // php 핸들러 분류
     final int phptype_TalkALL = 0;
     final int phptype_TalkMY = 1;
     final int phptype_TalkDELETE = 3;
     final int phptype_TalkLIKE = 4;
     int phptype;
+
+    //좋아요 임시 저장
+    int tmpIndex;
+    TextView tmpLikecount;
 
     Tab1_read()
     {
@@ -519,6 +523,11 @@ public class Tab1_read extends Activity
                 {
                     if(str.toString().equals("SUCCESS"))
                     {
+                        int likenum = Integer.parseInt(listItem.get(tmpIndex).GET_talk_likecount()) +1;
+                        listItem.get(tmpIndex).SET_talk_likecount(String.valueOf(likenum));
+                       // tmpLikecount.setText(likenum);
+                        customAdapter.notifyDataSetChanged();
+
                         Toast.makeText(((Main) Main.MinContext),"해당 글을 좋아합니다.",Toast.LENGTH_SHORT).show();
                     }
                     else if(str.toString().equals("OVERLAP"))
@@ -529,8 +538,6 @@ public class Tab1_read extends Activity
                     {
                         Toast.makeText(((Main) Main.MinContext),"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
                     }
-                    list.setAdapter(customAdapter);
-                    customAdapter.notifyDataSetInvalidated();
                     ((Main)Main.MinContext).StopShow();   // 다이얼로그 종료
                     break;
                 }
@@ -569,7 +576,7 @@ public class Tab1_read extends Activity
         {
             // final View view;
             final TalkData data = items.get(position);
-
+            final int index = position;
 
             if(convertView == null)
             {
@@ -629,6 +636,8 @@ public class Tab1_read extends Activity
                     @Override
                     public void onClick(View v)
                     {
+                       // tmpLikecount = holder.View_likecount;
+                        tmpIndex =index;
                         like_talk(data.GET_talk_idx(), data.GET_user_id(),  ((Main) Main.MinContext).Get_DeviceID());
 
                         Log.i("like",data.GET_talk_idx()+" / "+data.GET_user_id()+" / "+((Main) Main.MinContext).Get_DeviceID());
@@ -712,7 +721,7 @@ public class Tab1_read extends Activity
 
         }
 
-        class ViewHolder
+       public class ViewHolder
         {
             ImageView View_img;
             TextView View_data;

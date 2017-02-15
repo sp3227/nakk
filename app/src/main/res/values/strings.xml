@@ -2,6 +2,8 @@
     <string name="app_name">낚중일기</string>
 
     <string name="dwonload_url">http://www.naver.com</string>
+    <string name="error_thumbnail_view">There was an error initializing the YouTubeThumbnailView (%1$s)</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
 
 <string name="useinfo_1">
         [이용약관]\n
