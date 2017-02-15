@@ -108,7 +108,7 @@ public class Main extends Activity
         add_Linear.removeAllViews();
         add_Linear.addView(tab3_.in_layout);
 
-        tab3_.init_tab3();
+        //tab3_.init_tab3();
     }
 
     public void Btn_Tab_4(View v)   // 탭4  설정
@@ -188,6 +188,19 @@ public class Main extends Activity
         Intent intent = new Intent(this.getApplicationContext(), Write_jarangTalk.class);
         startActivity(intent);
     }
+
+
+
+
+    // 탭 3 부분
+
+    public void YoutubePlay(String value)
+    {
+        Intent intent = new Intent(((Main) Main.MinContext), YoutubeActivity.class);
+        intent.putExtra("movurl",value);
+        startActivity(intent);
+    }
+
 
     // 프로그레스 설정
     public void InitShow()
