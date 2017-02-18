@@ -15,12 +15,14 @@ public class Tab4_read extends Activity
     public LinearLayout in_layout;
     public LayoutInflater Inflater;
 
+
     Tab4_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
-        Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Inflater = (LayoutInflater) Main.MinContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab4, null);
+
     }
 
     public void init_tab4()

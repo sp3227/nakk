@@ -80,7 +80,7 @@ public class Tab1_read extends Activity
     Tab1_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
-        Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Inflater = (LayoutInflater) Main.MinContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab1, null);
 
@@ -112,7 +112,7 @@ public class Tab1_read extends Activity
         catch(Exception e)
         {
             // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText((Main) Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
             Log.e("Exception Error", e.toString());
         }
 
@@ -144,7 +144,7 @@ public class Tab1_read extends Activity
         catch(Exception e)
         {
             // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText((Main) Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
             Log.e("Exception Error", e.toString());
         }
 
@@ -176,7 +176,7 @@ public class Tab1_read extends Activity
         catch(Exception e)
         {
             // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText((Main) Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
             Log.e("Exception Error", e.toString());
         }
 
@@ -208,7 +208,7 @@ public class Tab1_read extends Activity
         catch(Exception e)
         {
             // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText((Main) Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
             Log.e("Exception Error", e.toString());
         }
 
@@ -241,7 +241,7 @@ public class Tab1_read extends Activity
         catch(Exception e)
         {
             // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText((Main) Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Main.MinContext, "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
             Log.e("Exception Error", e.toString());
         }
 
@@ -429,7 +429,7 @@ public class Tab1_read extends Activity
 
                             listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
                         }
-                        customAdapter = new CustomAdapter((Main) Main.MinContext, R.id.list_item, listItem);
+                        customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
                         list.setAdapter(customAdapter);
 
                     } catch (JSONException e) {
@@ -485,7 +485,7 @@ public class Tab1_read extends Activity
 
                             listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
                         }
-                        customAdapter = new CustomAdapter((Main) Main.MinContext, R.id.list_item, listItem);
+                        customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
                         list.setAdapter(customAdapter);
 
                     } catch (JSONException e) {
@@ -500,11 +500,11 @@ public class Tab1_read extends Activity
                 {
                     if(str.toString().equals("SUCCESS"))
                     {
-                        Toast.makeText(((Main) Main.MinContext),"해당 글이 삭제되었습니다.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext,"해당 글이 삭제되었습니다.",Toast.LENGTH_SHORT).show();
                     }
                     else if(str.toString().equals("SEVERFAILED"))
                     {
-                        Toast.makeText(((Main) Main.MinContext),"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext,"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
                     }
 
                     if(talk_type.equals("ALL"))
@@ -528,15 +528,15 @@ public class Tab1_read extends Activity
                        // tmpLikecount.setText(likenum);
                         customAdapter.notifyDataSetChanged();
 
-                        Toast.makeText(((Main) Main.MinContext),"해당 글을 좋아합니다.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext,"해당 글을 좋아합니다.",Toast.LENGTH_SHORT).show();
                     }
                     else if(str.toString().equals("OVERLAP"))
                     {
-                        Toast.makeText(((Main) Main.MinContext),"이미 좋아 하셨잔아요...-_-",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext,"이미 좋아 하셨잔아요...-_-",Toast.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        Toast.makeText(((Main) Main.MinContext),"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext,"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
                     }
                     ((Main)Main.MinContext).StopShow();   // 다이얼로그 종료
                     break;
@@ -697,7 +697,7 @@ public class Tab1_read extends Activity
                     @Override
                     public void onClick(View v)
                     {
-                        new AlertDialog.Builder(((Main) Main.MinContext))
+                        new AlertDialog.Builder(Main.MinContext)
                                 .setMessage("해당 글을 하시겠습니까?")
                                 .setNegativeButton("네", new DialogInterface.OnClickListener()
                                 {

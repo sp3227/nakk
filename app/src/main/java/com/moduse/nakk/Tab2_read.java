@@ -19,7 +19,7 @@ public class Tab2_read extends Activity
     Tab2_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
-        Inflater = (LayoutInflater) ((Main) Main.MinContext).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        Inflater = (LayoutInflater) Main.MinContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab2, null);
 
