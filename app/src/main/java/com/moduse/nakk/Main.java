@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
@@ -40,6 +41,17 @@ public class Main extends Activity
     //레이아웃 선언
     ImageView adView;      // 배너
 
+    // 탭 아이콘 연결
+    ImageView icon_tab1;
+    ImageView icon_tab2;
+    ImageView icon_tab3;
+    ImageView icon_tab4;
+
+    BitmapDrawable tab1img;
+    BitmapDrawable tab2img;
+    BitmapDrawable tab3img;
+    BitmapDrawable tab4img;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,6 +59,12 @@ public class Main extends Activity
         setContentView(R.layout.main);
 
         MinContext = this;
+
+        // 아이콘 세팅
+        icon_tab1 = (ImageView) findViewById(R.id.icon_tab1_init);
+        icon_tab2 = (ImageView) findViewById(R.id.icon_tab2_init);
+        icon_tab3 = (ImageView) findViewById(R.id.icon_tab3_init);
+        icon_tab4 = (ImageView) findViewById(R.id.icon_tab4_init);
 
         loading = new ProgressDialog(Main.this);  // 프로그래스
         appInfo = new AppInfo();  // 데이터
@@ -57,6 +75,8 @@ public class Main extends Activity
 
     public void init_Layout()        // 초기 세팅
     {
+        icon_changeTab("tab1");
+
         add_Linear = (LinearLayout) findViewById(R.id.inLayout);
 
         Inflater = getLayoutInflater();
@@ -86,6 +106,8 @@ public class Main extends Activity
 
     public void Btn_Tab_1(View v)   // 탭1 자랑하기
     {
+        icon_changeTab("tab1");
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
         add_Linear.addView(tab1_.in_layout,layoutParams);
@@ -95,6 +117,8 @@ public class Main extends Activity
 
     public void Btn_Tab_2(View v)   // 탭2  포인트
     {
+        icon_changeTab("tab2");
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
         add_Linear.addView(tab2_.in_layout);
@@ -104,6 +128,8 @@ public class Main extends Activity
 
     public void Btn_Tab_3(View v)   // 탭3  낚중일기
     {
+        icon_changeTab("tab3");
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
         add_Linear.addView(tab3_.in_layout);
@@ -113,6 +139,8 @@ public class Main extends Activity
 
     public void Btn_Tab_4(View v)   // 탭4  설정
     {
+        icon_changeTab("tab4");
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
         add_Linear.addView(tab4_.in_layout);
@@ -199,6 +227,59 @@ public class Main extends Activity
         Intent intent = new Intent(((Main) Main.MinContext), YoutubeActivity.class);
         intent.putExtra("movurl",value);
         startActivity(intent);
+    }
+
+
+
+    public void icon_changeTab(String value)
+    {
+        if(value.toString().equals("tab1")) {
+            tab1img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab1_);
+            tab2img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab2);
+            tab3img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab3);
+            tab4img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab4);
+
+            icon_tab1.setImageDrawable(tab1img);
+            icon_tab2.setImageDrawable(tab2img);
+            icon_tab3.setImageDrawable(tab3img);
+            icon_tab4.setImageDrawable(tab4img);
+        }
+        else if(value.toString().equals("tab2"))
+        {
+            tab1img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab1);
+            tab2img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab2_);
+            tab3img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab3);
+            tab4img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab4);
+
+            icon_tab1.setImageDrawable(tab1img);
+            icon_tab2.setImageDrawable(tab2img);
+            icon_tab3.setImageDrawable(tab3img);
+            icon_tab4.setImageDrawable(tab4img);
+        }
+        else if(value.toString().equals("tab3"))
+        {
+            tab1img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab1);
+            tab2img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab2);
+            tab3img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab3_);
+            tab4img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab4);
+
+            icon_tab1.setImageDrawable(tab1img);
+            icon_tab2.setImageDrawable(tab2img);
+            icon_tab3.setImageDrawable(tab3img);
+            icon_tab4.setImageDrawable(tab4img);
+        }
+        else if(value.toString().equals("tab4"))
+        {
+            tab1img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab1);
+            tab2img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab2);
+            tab3img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab3);
+            tab4img = (BitmapDrawable) getResources().getDrawable(R.drawable.icon_tab4_);
+
+            icon_tab1.setImageDrawable(tab1img);
+            icon_tab2.setImageDrawable(tab2img);
+            icon_tab3.setImageDrawable(tab3img);
+            icon_tab4.setImageDrawable(tab4img);
+        }
     }
 
 

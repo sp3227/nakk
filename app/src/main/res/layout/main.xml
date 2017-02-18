@@ -28,6 +28,7 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/icon_tab1_init"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/icon_tab1"/>
@@ -69,6 +70,7 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/icon_tab2_init"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/icon_tab2"/>
@@ -110,6 +112,7 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/icon_tab3_init"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/icon_tab3"/>
@@ -151,6 +154,7 @@
                 android:layout_weight="1">
 
                 <ImageView
+                    android:id="@+id/icon_tab4_init"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/icon_tab4"/>
