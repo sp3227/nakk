@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -210,6 +212,51 @@ public class Main extends Activity
         return null;
     }
 
+    //자랑하기에서 위치 이동
+    public void tab1_loaction_start(String type, String latitude, String longitude)
+    {
+        if(type.toString().equals("true"))
+        {
+            Double tmpA = Double.parseDouble(latitude);
+            Double tmpB = Double.parseDouble(longitude);
+
+            Intent intent = new Intent(Main.MinContext,Tab1_map.class);
+            intent.putExtra("type","view_point");
+            intent.putExtra("latitude",tmpA);
+            intent.putExtra("longitude",tmpB);
+            startActivity(intent);
+        }
+    }
+
+    // 멘트창 열기
+    public void tab1_ment_start(boolean type, String idx, String talk_idx, String talk_writeid)
+    {
+        Intent intent = new Intent(Main.MinContext, Tab1_ment.class);
+        if(type)
+        {
+            // 댓글이 1개라도 있을떄
+            intent.putExtra("type","tre");
+            intent.putExtra("putidx",idx);
+            intent.putExtra("puttalkidx",talk_idx);
+            intent.putExtra("puttalkwriteid",talk_writeid);
+
+            startActivity(intent);
+        }
+        else
+        {
+          Toast.makeText(getApplicationContext(),"서버연결이 불안정합니다.",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+
+
+
+
+
+
+  // 메인 부분
     // 자랑하기 글쓰기
     public void tab1_btn_write(View v)
     {
@@ -224,7 +271,7 @@ public class Main extends Activity
 
     public void YoutubePlay(String value)
     {
-        Intent intent = new Intent(((Main) Main.MinContext), YoutubeActivity.class);
+        Intent intent = new Intent(Main.MinContext, YoutubeActivity.class);
         intent.putExtra("movurl",value);
         startActivity(intent);
     }
@@ -282,6 +329,32 @@ public class Main extends Activity
         }
     }
 
+
+    // 뒤로가기 (종료 메인이라서)
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
+            case KeyEvent.KEYCODE_BACK:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("[앱 종료]") // 제목 설정
+                        .setMessage("낚중일기를 종료 하시겠습니까?")
+                        .setCancelable(false)  //뒤로 버튼 클릭시 취소 설정
+                        .setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            // 예 버튼 클릭시 설정
+                            public void onClick(DialogInterface dialogInterface, int i)
+                            {
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("아니요", null).show();
+
+                AlertDialog alert = builder.create();  //알림 객체 생성
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     // 프로그레스 설정
     public void InitShow()

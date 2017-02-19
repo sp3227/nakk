@@ -224,6 +224,7 @@ public class Tab1_read extends Activity
 
         // post 전달 인자
         Vector<NameValuePair> list = new Vector<NameValuePair>();
+
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("talk_idx",talk_idx));
         list.add(new BasicNameValuePair("talk_writeid",device_id_taget));
@@ -231,7 +232,7 @@ public class Tab1_read extends Activity
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
-            String url = appInfo.Get_Tab_TalklikeURL();  // url 설정
+            String url = appInfo.Get_Tab1_TalklikeURL();  // url 설정
             HttpPost request = new HttpPost(url);
             request.setEntity(entity);
 
@@ -542,7 +543,7 @@ public class Tab1_read extends Activity
                     break;
                 }
             }
-            Log.i("like",str);
+
         }
     }
 
@@ -588,9 +589,11 @@ public class Tab1_read extends Activity
                 holder.View_img = (ImageView) convertView.findViewById(R.id.tab1_item_talkimg);
                 holder.View_data = (TextView) convertView.findViewById(R.id.tab1_item_data);
                 holder.View_likecount = (TextView) convertView.findViewById(R.id.tab1_item_likecount);
-                holder.View_mentcount = (TextView) convertView.findViewById(R.id.tab1_item_mentcount);
                 holder.View_likesubmit = (LinearLayout) convertView.findViewById(R.id.tab1_item_like_submit);
+                holder.View_mentcount = (TextView) convertView.findViewById(R.id.tab1_item_mentcount);
+                holder.View_mentsubmit = (LinearLayout) convertView.findViewById(R.id.tab1_item_ment_submit);
                 holder.View_loactionstate = (TextView) convertView.findViewById(R.id.tab1_item_loationstate);
+                holder.View_loacaionsatatesubmit = (LinearLayout) convertView.findViewById(R.id.tab1_item_location_submit);
                 holder.View_writetime = (TextView) convertView.findViewById(R.id.tab1_item_date);
 
                 holder.View_user_nickname = (TextView) convertView.findViewById(R.id.tab1_item_nickname);
@@ -615,7 +618,7 @@ public class Tab1_read extends Activity
                 {
                     // 이미지 있음
                    // holder.View_img.setVisibility(View.VISIBLE);
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().thumbnail(0.5f).into(holder.View_img);
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
@@ -628,35 +631,112 @@ public class Tab1_read extends Activity
                 }
                 // 자랑하기 글 부분
                 holder.View_data.setText(data.GET_talk_data());
-                // 자랑하기 좋아요 부분(클릭 이벤트 줘야함)
-                holder.View_likecount.setText(data.GET_talk_likecount());
-                // 자랑하기 멘트 부분(클릭 이벤트 줘야함)tab1_item_like
-                holder.View_likesubmit.setOnClickListener(new LinearLayout.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                       // tmpLikecount = holder.View_likecount;
-                        tmpIndex =index;
-                        like_talk(data.GET_talk_idx(), data.GET_user_id(),  ((Main) Main.MinContext).Get_DeviceID());
 
-                        Log.i("like",data.GET_talk_idx()+" / "+data.GET_user_id()+" / "+((Main) Main.MinContext).Get_DeviceID());
+                // 자랑하기 좋아요 부분(클릭 이벤트 줘야함)
+                if(data.GET_talk_likecount().equals("0"))
+                {
+                    //좋아요 레이아웃 셋팅
+                    String strColor1 = "#777777";
+                    holder.View_likecount.setText("-");
+                    holder.View_likecount.setTextColor(Color.parseColor(strColor1));
+                }
+                else
+                {
+                    String strColor2 = "#fa0175";
+                    holder.View_likecount.setText(data.GET_talk_likecount());
+                    holder.View_likecount.setTextColor(Color.parseColor(strColor2));
+                }
+
+                // 좋아요 + 버튼 리스너
+                holder.View_likesubmit.setOnClickListener(new LinearLayout.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // tmpLikecount = holder.View_likecount;
+                        tmpIndex = index;
+                        like_talk(data.GET_talk_idx(), data.GET_user_id(), ((Main) Main.MinContext).Get_DeviceID());
+
+                        Log.i("like", data.GET_talk_idx() + " / " + data.GET_user_id() + " / " + ((Main) Main.MinContext).Get_DeviceID());
                     }
                 });
-                holder.View_mentcount.setText(data.GET_talk_mentcount());
+
+                // 자랑하기 멘트 부분(클릭 이벤트 줘야함)
+                if(data.GET_talk_mentcount().equals("0"))
+                {
+                    //좋아요 레이아웃 셋팅
+                    String strColor1 = "#777777";
+                    holder.View_mentcount.setText("-");
+                    holder.View_mentcount.setTextColor(Color.parseColor(strColor1));
+
+                    // 자랑하기 멘트 클릭 (멘트 없을때)
+                    holder.View_mentsubmit.setOnClickListener(new LinearLayout.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            //멘트 없음 클릭시 토스트
+                            Toast.makeText(Main.MinContext,"해당글은 인기가 없어서 그런지.. 댓글이 없습니다.",Toast.LENGTH_LONG).show();
+                            ((Main) Main.MinContext).tab1_ment_start(true,data.GET_talk_idx(), data.GET_talk_idx(), data.GET_talk_writeid());
+                        }
+                    });
+                }
+                else
+                {
+                    String strColor2 = "#fa0175";
+                    holder.View_mentcount.setText(data.GET_talk_mentcount());
+                    holder.View_mentcount.setTextColor(Color.parseColor(strColor2));
+
+                    // 자랑하기 멘트 클릭 (멘트 있을때)
+                    holder.View_mentsubmit.setOnClickListener(new LinearLayout.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            ((Main) Main.MinContext).tab1_ment_start(true,data.GET_talk_idx(), data.GET_talk_idx(), data.GET_talk_writeid());
+                        }
+                    });
+                }
+
+
                 // 자랑하기 위치 부분(클릭 이벤트 줘야함) 공개 / 비공개
                 if(data.GET_talk_locationstate().equals("none") || data.GET_talk_img() == "" || data.GET_talk_img() == null)
                 {
                     holder.View_loactionstate.setText("비공개");
                     String strColor1 = "#777777";
                     holder.View_loactionstate.setTextColor(Color.parseColor(strColor1));
+
+                    // 위치 부분 클릭 리스너
+                    holder.View_loacaionsatatesubmit.setOnClickListener(new LinearLayout.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            //위치 비공개 클릭시 토스트
+                            Toast.makeText(Main.MinContext,"위치 정보가 기록되어 있지 않습니다.",Toast.LENGTH_LONG).show();
+                        }
+
+                    });
                 }
                 else
                 {
                     String strColor2 = "#fa0175";
-                    holder.View_loactionstate.setText("공개");
+                    holder.View_loactionstate.setText("공개함");
                     holder.View_loactionstate.setTextColor(Color.parseColor(strColor2));
+
+                    // 위치 부분 클릭 리스너
+                    holder.View_loacaionsatatesubmit.setOnClickListener(new LinearLayout.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            //위치 공개 클릭시 Main tab1_loaction_start 함수
+                            ((Main) Main.MinContext).tab1_loaction_start(data.GET_talk_locationstate(),data.GET_talk_latitude(),data.GET_talk_longitude());
+                        }
+
+                    });
                 }
+
+
+
                 // 자랑하기 작성시간 부분
                 holder.View_writetime.setText(data.GET_talk_writetime());
                 // 자랑하기 작성자 닉네임 부분
@@ -713,7 +793,7 @@ public class Tab1_read extends Activity
                     }
                 });
 
-                customAdapter.notifyDataSetChanged();
+               // customAdapter.notifyDataSetChanged();
             }
 
 
@@ -728,7 +808,9 @@ public class Tab1_read extends Activity
             TextView View_likecount;
             LinearLayout View_likesubmit;
             TextView View_mentcount;
+            LinearLayout View_mentsubmit;
             TextView View_loactionstate;
+            LinearLayout View_loacaionsatatesubmit;
             TextView View_writetime;
             LinearLayout View_delete;
 

@@ -101,6 +101,7 @@ public class Signup extends AppCompatActivity
 
                 } else if(action.equals(QuickstartPreferences.REGISTRATION_COMPLETE)){
                     token = intent.getStringExtra("token");
+                    Log.i("TTT",token);
                 }
 
             }
@@ -115,7 +116,6 @@ public class Signup extends AppCompatActivity
         setContentView(R.layout.signup);
 
         registBroadcastReceiver();
-
         appInfo = new AppInfo();   // info 데이터 초기화
 
         loading = new ProgressDialog(Signup.this);  //  다이얼로그 초기화
@@ -314,12 +314,12 @@ public class Signup extends AppCompatActivity
                     Vector<NameValuePair> list = new Vector<NameValuePair>();
                     //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
 
-                    String push = (String)params[0];
-                    String id = (String)params[1];
-                    String pass = (String)params[2];
-                    String device = (String)params[3];
-                    String nickname = (String)params[4];
-                    String email = (String)params[5];
+                    String push = params[0];
+                    String id = params[1];
+                    String pass = params[2];
+                    String device = params[3];
+                    String nickname = params[4];
+                    String email = params[5];
 
 
                    // Log.i("result "," /push :"+push+" /id :"+id+" /pass :"+pass+" /device :"+device+" /nickname :"+nickname+" /email :"+email);

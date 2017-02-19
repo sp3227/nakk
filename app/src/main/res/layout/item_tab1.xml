@@ -141,12 +141,12 @@
                     android:text="25"
                     android:textStyle="italic"
                     android:textSize="16dp"
-                    android:textColor="#fa0175"/>
+                    android:textColor="#777777"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:onClick="tab1_item_ment"
+                android:id="@+id/tab1_item_ment_submit"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:onClick="tab1_item_location"
+                android:id="@+id/tab1_item_location_submit"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

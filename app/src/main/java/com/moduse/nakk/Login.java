@@ -13,7 +13,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -78,35 +77,10 @@ public class Login extends AppCompatActivity {
             loginsave.setChecked(true);
         }
 
-        loginsave.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                if(isChecked)
-                {
-                    String ID = user_id.getText().toString();
-                    String PW = user_pass.getText().toString();
 
-                    editor.putString("ID", ID);
-                    editor.putString("PW", PW);
-                    editor.putBoolean("Auto_Login_enabled", true);
-                    editor.commit();
-                }
-                else
-                {
-                    /**
-                     * remove로 지우는것은 부분삭제
-                     * clear로 지우는것은 전체 삭제 입니다
-                     */
-//					editor.remove("ID");
-//					editor.remove("PW");
-//					editor.remove("Auto_Login_enabled");
-                    editor.clear();
-                    editor.commit();
-                }
-            }
-        });
+
+
+
     }
 
     public void btn_login(View v)
@@ -123,6 +97,23 @@ public class Login extends AppCompatActivity {
         if(loginsave.isChecked())
         {
             setting = getSharedPreferences("logininit",0);
+
+            editor.putString("ID", id);
+            editor.putString("PW", pass);
+            editor.putBoolean("Auto_Login_enabled", true);
+            editor.commit();
+        }
+        else
+        {
+            /**
+             * remove로 지우는것은 부분삭제
+             * clear로 지우는것은 전체 삭제 입니다
+             */
+//					editor.remove("ID");
+//					editor.remove("PW");
+//					editor.remove("Auto_Login_enabled");
+            editor.clear();
+            editor.commit();
         }
     }
 
@@ -226,13 +217,13 @@ public class Login extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 try
                 {
-                    String url = (String)params[2];   // url 설정
+                    String url = params[2];   // url 설정
                     HttpPost request = new HttpPost(url);
                     Vector<NameValuePair> list = new Vector<NameValuePair>();
                     //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
 
-                    String id_ = (String) params[0];
-                    String pass_ = (String) params[1];
+                    String id_ = params[0];
+                    String pass_ = params[1];
 
 
                     list.add(new BasicNameValuePair("LOGIN_ID", id_));

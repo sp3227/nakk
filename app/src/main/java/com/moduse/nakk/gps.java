@@ -41,7 +41,7 @@ public class gps extends Activity implements MapView.MapViewEventListener, MapVi
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.tab1_map);
 
         loading = new ProgressDialog(gps.this);  // 프로그래스
 
@@ -187,8 +187,8 @@ public class gps extends Activity implements MapView.MapViewEventListener, MapVi
 
     // 뒤로가기 (종료 메인이라서)
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
         switch (keyCode) {
             //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
             case KeyEvent.KEYCODE_BACK:

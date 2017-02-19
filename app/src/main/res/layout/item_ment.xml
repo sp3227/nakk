@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/tab1_ment_proimg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center|left"
+                    android:src="@drawable/textimg" />
+
+                <TextView
+                    android:paddingRight="10dp"
+                    android:id="@+id/tab1_ment_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="7dp"
+                    android:gravity="center|left"
+                    android:text="닉네임"
+                    android:textColor="#000000"
+                    android:textSize="17dp"
+                    android:textStyle="bold|italic" />
+
+                <TextView
+                    android:paddingRight="7dp"
+                    android:id="@+id/tab1_ment_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center|left"
+                    android:text="2013-12-22 13:33:33"
+                    android:textColor="#6a6a6a"
+                    android:textSize="12dp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <LinearLayout
+                    android:id="@+id/tab1_ment_btn_delete"
+                    android:visibility="visible"
+                    android:layout_width="50dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/btn_grayround2">
+
+                    <TextView
+                        android:layout_marginRight="3dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="삭제"
+                        android:textSize="13dp"
+                        android:textColor="#ffffff"
+                        android:textStyle="bold|italic"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:id="@+id/tab1_ment_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:text="ldfnglknㅇㄹ해ㅑㅇ래ㅑ후ㅐㅇ루해ㅑㅜ애랴후ㅐㅇ루해ㅜㅇ래ㅑ후ㅐㅑ우래후애루해ㅜ애루해우래후애루해ㅜㅇ랴ㅜ해우래ㅑ후ㅐㅇ루해ㅑㅜㅇ래ㅑ후ㅐㅇ루해ㅜㅇ래후ㅐㅑㅇ루해ㅜㅇ래ㅑ후ㅐㅇ루해ㅜㅇ래후ㅐㅑㅇ뤃"
+            android:textColor="#000000"/>
+
+    </LinearLayout>
+
+</LinearLayout>

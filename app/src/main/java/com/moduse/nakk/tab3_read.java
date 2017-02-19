@@ -359,7 +359,7 @@ public class Tab3_read extends Activity {
                 holder.View_data.setText(data.GET_data());
 
 
-                customAdapter.notifyDataSetChanged();
+               // customAdapter.notifyDataSetChanged();
             }
 
 

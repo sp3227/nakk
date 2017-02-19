@@ -18,13 +18,22 @@ public class AppInfo
     private String SignUpURL = "http://nakk20.raonnet.com/php_data/User_signup.php";
 
     //탭1 글 불러오기
-    private String Tab1_TalkInselectURL ="http://nakk20.raonnet.com/php_data/jaraing_talk_select.php";
+    private String Tab1_TalkInselectURL ="http://nakk20.raonnet.com/php_data/Jaraing_talk_select.php";
 
     //탭1 글 삭제
-    private String Tab1_TalkdeleteURL ="http://nakk20.raonnet.com/php_data/jaraing_talk_delete.php";
+    private String Tab1_TalkdeleteURL ="http://nakk20.raonnet.com/php_data/Jaraing_talk_delete.php";
 
     //탭1 좋아요
-    private String Tab_TalklikeURL ="http://nakk20.raonnet.com/php_data/jaraing_like.php";
+    private String Tab1_TalklikeURL ="http://nakk20.raonnet.com/php_data/Jaraing_like.php";
+
+    //탭1 멘트 불러오기
+    private String Tab1_MentloadURL ="http://nakk20.raonnet.com/php_data/Jaraing_ment_select.php";
+
+    //탭1 멘트 추가
+    private String Tab1_MentaddURL ="http://nakk20.raonnet.com/php_data/Jaraing_ment_add.php";
+
+    //탭1 멘트 삭제
+    private String Tab1_MentdeleteURL ="http://nakk20.raonnet.com/php_data/Jaraing_ment_delete.php";
 
     //탭3 유튜브
     private String Tab3_YoutubeURL = "http://nakk20.raonnet.com/php_data/youtubelist.php";
@@ -52,7 +61,10 @@ public class AppInfo
     public String Get_SignUpURL(){return SignUpURL;}
     public String Get_Tab1_TalkInselectURL(){return Tab1_TalkInselectURL;}
     public String Get_Tab1_TalkdeleteURL(){return Tab1_TalkdeleteURL;}
-    public String Get_Tab_TalklikeURL(){return Tab_TalklikeURL;}
+    public String Get_Tab1_TalklikeURL(){return Tab1_TalklikeURL;}
+    public String Get_Tab1_MentloadURL(){return Tab1_MentloadURL;}
+    public String Get_Tab1_MentaddURL(){return Tab1_MentaddURL;}
+    public String Get_Tab1_MentdeleteURL(){return Tab1_MentdeleteURL;}
 
 
     public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}
