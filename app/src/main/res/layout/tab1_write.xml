@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:background="#191919">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="자랑글쓰기"
+            android:textSize="20dp"
+            android:textStyle="bold|italic"
+            android:textColor="#00fff4"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="1.2">
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <ImageView
+                android:onClick="tab1_add_btn_location"
+                android:id="@+id/tab1_add_img_location"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/jarang_upload_location_off"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <ImageView
+                android:onClick="tab1_add_btn_img"
+                android:id="@+id/tab1_add_img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/jarang_upload_img_default"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="1.63">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|top"
+                android:text="위치공개"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="#cccccc"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center|top"
+                android:text="자랑사진"
+                android:textStyle="bold|italic"
+                android:textSize="20dp"
+                android:textColor="#cccccc"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/btn_grayround2"
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/tab1_add_edit_data"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#000000"
+            android:text=""
+            android:textStyle="bold|italic"
+            android:lineSpacingExtra="3dp"
+            android:hint="자랑글을 입력해주세요."
+            android:textColorHint="#ffffff"
+            android:gravity="top|left"
+            android:background="@android:color/transparent"/>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="-30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1.5">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:onClick="tab1_add_btn_submit"
+                android:layout_centerInParent="true"
+                android:layout_width="180dp"
+                android:layout_height="55dp"
+                android:background="@drawable/btn_blackound">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="자랑올리기"
+                    android:textStyle="bold|italic"
+                    android:textColor="#00fff4"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

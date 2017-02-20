@@ -168,37 +168,41 @@ public class Tab1_ment  extends Activity
     // 멘트 추가하기 함수
     public void Load_add()
     {
-        StartShow();  // 다이얼로그 시작
-        phptype = MENT_ADD;
-
-        input_data = editText_ment.getText().toString();
-
-        //post 인자값 전달
-        Vector<NameValuePair> list = new Vector<NameValuePair>();
-
-        //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
-        list.add(new BasicNameValuePair("talkidx",put_talk_idx));
-        list.add(new BasicNameValuePair("talkwriteid",put_talk_writeid));
-        list.add(new BasicNameValuePair("menterid",put_menterid));
-        list.add(new BasicNameValuePair("mentdata",input_data));
-
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
-            String url = appInfo.Get_Tab1_MentaddURL();  // url 설정
-            HttpPost request = new HttpPost(url);
-            request.setEntity(entity);
-
-            downsever = new phpdown();  // 쓰레드 생성
-            downsever.execute(request);
-        }
-        catch(Exception e)
+        if(!editText_ment.getText().toString().equals(""))
         {
-            // 서버에 연결할 수 없습니다 토스트 메세지 보내기
-            Toast.makeText(this.getApplicationContext(), "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
-            Log.e("Exception Error", e.toString());
-        }
+            StartShow();  // 다이얼로그 시작
+            phptype = MENT_ADD;
 
-        Remove_list();
+            input_data = editText_ment.getText().toString();
+
+            //post 인자값 전달
+            Vector<NameValuePair> list = new Vector<NameValuePair>();
+
+            //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
+            list.add(new BasicNameValuePair("talkidx", put_talk_idx));
+            list.add(new BasicNameValuePair("talkwriteid", put_talk_writeid));
+            list.add(new BasicNameValuePair("menterid", put_menterid));
+            list.add(new BasicNameValuePair("mentdata", input_data));
+
+            try {
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
+                String url = appInfo.Get_Tab1_MentaddURL();  // url 설정
+                HttpPost request = new HttpPost(url);
+                request.setEntity(entity);
+
+                downsever = new phpdown();  // 쓰레드 생성
+                downsever.execute(request);
+            } catch (Exception e) {
+                // 서버에 연결할 수 없습니다 토스트 메세지 보내기
+                Toast.makeText(this.getApplicationContext(), "서버접속이 불안정합니다. 인터넷 환경을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                Log.e("Exception Error", e.toString());
+            }
+            input_data = "";
+        }
+        else
+        {
+            Toast.makeText(this.getApplicationContext(), "입력한 멘트가 없습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // 멘트 삭제하기 함수
@@ -383,7 +387,6 @@ public class Tab1_ment  extends Activity
 
                     String talk_idx;
                     String talk_writeid;
-                    String push_target;
 
                     String menter_id;
                     String menter_nickname;
@@ -410,14 +413,13 @@ public class Tab1_ment  extends Activity
                                 idx = jo.getString("idx");
                                 talk_idx = jo.getString("talk_idx");
                                 talk_writeid = jo.getString("talk_writeid");
-                                push_target = jo.getString("push_target");
                                 menter_id = jo.getString("menter_id");
                                 menter_nickname = jo.getString("menter_nickname");
                                 menter_img = jo.getString("menter_img");
                                 ment_addtime = jo.getString("ment_addtime");
                                 ment_data = jo.getString("ment_data");
 
-                                listItem.add(new MentData(idx, talk_idx, talk_writeid, push_target, menter_id, menter_nickname, menter_img, ment_addtime, ment_data));
+                                listItem.add(new MentData(idx, talk_idx, talk_writeid, menter_id, menter_nickname, menter_img, ment_addtime, ment_data));
                             }
                             customAdapter = new CustomAdapter(getApplicationContext(), R.id.list_item, listItem);
                             list.setAdapter(customAdapter);
@@ -434,15 +436,25 @@ public class Tab1_ment  extends Activity
                 {
                     if(str.toString().equals("SUCCESS"))
                     {
+                        Remove_list();
                         Toast.makeText(getApplicationContext(),"그대에게 어복이 있기를...",Toast.LENGTH_SHORT).show();
                         Load_ment();  // 멘트 다시 불러오기
                     }
                     else if(str.toString().equals("PUSHFALSE"))
                     {
-                        Toast.makeText(getApplicationContext(),"PUSHFALSE",Toast.LENGTH_SHORT).show();
+                        Remove_list();
+                        Toast.makeText(getApplicationContext(),"푸시는 전송 안됨",Toast.LENGTH_SHORT).show();
                         Load_ment();  // 멘트 다시 불러오기
                     }
+                    else if(str.toString().equals("CHARNULL"))
+                    {
+                        Toast.makeText(getApplicationContext(),"입력된 값이 없습니다.",Toast.LENGTH_SHORT).show();
+                    }
                     else if(str.toString().equals("FAILURE"))
+                    {
+                        Toast.makeText(getApplicationContext(),"인터넷 환경이 불안정합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
+                    }
+                    else
                     {
                         Toast.makeText(getApplicationContext(),"인터넷 환경이 불안정합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
                     }

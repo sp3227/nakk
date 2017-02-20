@@ -101,7 +101,7 @@ public class Signup extends AppCompatActivity
 
                 } else if(action.equals(QuickstartPreferences.REGISTRATION_COMPLETE)){
                     token = intent.getStringExtra("token");
-                    Log.i("TTT",token);
+                   // Log.i("TTT",token);
                 }
 
             }

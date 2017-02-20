@@ -42,6 +42,8 @@
         <activity android:name=".Tab3_read"/>
         <activity android:name=".Tab4_read"/>
         <activity android:name=".View_img"/>
+        <activity android:name=".Tab_addtalk"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".Tab1_map"/>
         <activity android:name=".Tab1_ment"
             android:windowSoftInputMode="adjustResize|stateHidden"/>

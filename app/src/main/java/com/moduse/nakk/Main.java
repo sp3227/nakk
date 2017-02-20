@@ -62,6 +62,8 @@ public class Main extends Activity
 
         MinContext = this;
 
+        InitShow();
+
         // 아이콘 세팅
         icon_tab1 = (ImageView) findViewById(R.id.icon_tab1_init);
         icon_tab2 = (ImageView) findViewById(R.id.icon_tab2_init);
@@ -180,10 +182,12 @@ public class Main extends Activity
         }
     }
 
+    // 보기 선택 (전체 , 내글)
     public void tab1_btn_category(View v)
     {
         showDialog(1);
     }
+
 
     // 타입별 불러오기  전체, 내글 (선택형 다이얼로그) 탭 1
     @Override
@@ -250,17 +254,11 @@ public class Main extends Activity
     }
 
 
-
-
-
-
-
-
   // 메인 부분
     // 자랑하기 글쓰기
     public void tab1_btn_write(View v)
     {
-        Intent intent = new Intent(this.getApplicationContext(), Write_jarangTalk.class);
+        Intent intent = new Intent(this.getApplicationContext(), Tab_addtalk.class);
         startActivity(intent);
     }
 

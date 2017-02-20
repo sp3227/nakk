@@ -2,19 +2,26 @@ package com.moduse.nakk;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -50,12 +57,48 @@ public class Login extends AppCompatActivity {
 
     private InputMethodManager imm;
 
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final String TAG = "MainActivity";
+
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+
+    String token;
+
+    public void getInstanceIdToken() {
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+    }
+
+    public void registBroadcastReceiver(){
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+
+                if(action.equals(QuickstartPreferences.REGISTRATION_READY)){
+
+                } else if(action.equals(QuickstartPreferences.REGISTRATION_GENERATING)){
+
+                } else if(action.equals(QuickstartPreferences.REGISTRATION_COMPLETE)){
+                    token = intent.getStringExtra("token");
+                   // Log.i("TTT",token);
+                }
+
+            }
+        };
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        registBroadcastReceiver();
         appInfo = new AppInfo();
 
         loading = new ProgressDialog(Login.this);
@@ -77,11 +120,48 @@ public class Login extends AppCompatActivity {
             loginsave.setChecked(true);
         }
 
+        getInstanceIdToken();
+    }
 
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_READY));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_GENERATING));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
 
     }
+
+    /**
+     * 앱이 화면에서 사라지면 등록된 LocalBoardcast를 모두 삭제한다.
+     */
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
+    /**
+     * Google Play Service를 사용할 수 있는 환경이지를 체크한다.
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
 
     public void btn_login(View v)
     {
@@ -92,7 +172,7 @@ public class Login extends AppCompatActivity {
         imm.hideSoftInputFromWindow(user_pass.getWindowToken(),0);
 
         // php 함수 호출
-        Login_user(id,pass,appInfo.Get_LoginURL());
+        Login_user(id,pass,token,appInfo.Get_LoginURL());
 
         if(loginsave.isChecked())
         {
@@ -164,7 +244,7 @@ public class Login extends AppCompatActivity {
 
 
 
-    private void Login_user(String id, String pass, String url)
+    private void Login_user(String id, String pass, String token, String url)
     {
         class phpdown extends AsyncTask<String, Integer, String>
         {
@@ -198,6 +278,10 @@ public class Login extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "아이디와 패스워드에 특수문자를 사용할수 없습니다.", Toast.LENGTH_LONG).show();
                 }
+                else if(result.toString().equals("CHARNULL"))
+                {
+                    Toast.makeText(getApplicationContext(), "찾을수 없는 아이디 입니다. 회원가입이 필요합니다.", Toast.LENGTH_LONG).show();
+                }
                 else if(result.toString().equals("BLOCK"))
                 {
                     Toast.makeText(getApplicationContext(), "정지된 아이디 입니다. 고객센터에 문의주세요.", Toast.LENGTH_LONG).show();
@@ -217,17 +301,19 @@ public class Login extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 try
                 {
-                    String url = params[2];   // url 설정
+                    String url = params[3];   // url 설정
                     HttpPost request = new HttpPost(url);
                     Vector<NameValuePair> list = new Vector<NameValuePair>();
                     //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
 
                     String id_ = params[0];
                     String pass_ = params[1];
+                    String token_ = params[2];
 
 
                     list.add(new BasicNameValuePair("LOGIN_ID", id_));
                     list.add(new BasicNameValuePair("LOGIN_PASS", pass_));
+                    list.add(new BasicNameValuePair("TOKEN", token_));
                     HttpEntity resEntity = new UrlEncodedFormEntity(list, HTTP.UTF_8);
                     request.setEntity(resEntity);
 
@@ -274,7 +360,7 @@ public class Login extends AppCompatActivity {
         }
 
         phpdown task = new phpdown();  // 함수 쓰레드 설정
-        task.execute(id,pass,url);  // 함수 쓰레드 시작
+        task.execute(id,pass,token,url);  // 함수 쓰레드 시작
 
     }
 

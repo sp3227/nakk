@@ -499,6 +499,8 @@ public class Tab1_read extends Activity
                 }
                 case phptype_TalkDELETE :  //삭제
                 {
+                    Log.i("str_del",str);
+                    Log.i("Get_DeviceID",((Main) Main.MinContext).Get_DeviceID());
                     if(str.toString().equals("SUCCESS"))
                     {
                         Toast.makeText(Main.MinContext,"해당 글이 삭제되었습니다.",Toast.LENGTH_SHORT).show();
