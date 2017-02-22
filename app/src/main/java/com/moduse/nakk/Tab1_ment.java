@@ -107,6 +107,7 @@ public class Tab1_ment  extends Activity
         loading = new ProgressDialog(Tab1_ment.this);  // 프로그래스
 
         appInfo = new AppInfo();  // 앱 데이터 설정
+        AppInfo.TargetContext =this;
 
         //키보드 내리기
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -127,7 +128,7 @@ public class Tab1_ment  extends Activity
         put_idx = talkintent.getStringExtra("putidx");
         put_talk_idx = talkintent.getStringExtra("puttalkidx");
         put_talk_writeid = talkintent.getStringExtra("puttalkwriteid");
-        put_menterid = ((Main)Main.MinContext).Get_DeviceID();
+        put_menterid = appInfo.Get_DeviceID();
 
 
         // 처음 멘트 불러오기

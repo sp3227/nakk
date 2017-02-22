@@ -50,7 +50,7 @@ public class TalkData
     public String GET_idx(){ return idx; }
     public String GET_talk_writeid(){ return talk_writeid; }
     public String GET_talk_idx(){ return talk_idx; }
-    public String GET_talk_img(){ return talkimgURL + talk_img; }
+    public String GET_talk_img() {return talkimgURL + talk_img;}
     public String GET_talk_data(){ return talk_data; }
     public String GET_talk_likecount(){ return talk_likecount; }
     public String GET_talk_mentcount(){ return talk_mentcount; }
@@ -61,7 +61,16 @@ public class TalkData
 
     public String GET_user_id(){ return user_id; }
     public String GET_user_nickname(){ return user_nickname; }
-    public String GET_user_profile(){ return proURL + user_profile; }
+    public String GET_user_profile()
+    {
+        if(user_profile.toString().equals("none"))
+        {
+            return user_profile;
+        }
+        else {
+            return proURL + user_profile;
+        }
+    }
 
 
     //SET

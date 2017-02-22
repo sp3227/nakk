@@ -62,6 +62,7 @@ public class Main extends Activity
 
         MinContext = this;
 
+        loading = new ProgressDialog(this);
         InitShow();
 
         // 아이콘 세팅
@@ -70,11 +71,25 @@ public class Main extends Activity
         icon_tab3 = (ImageView) findViewById(R.id.icon_tab3_init);
         icon_tab4 = (ImageView) findViewById(R.id.icon_tab4_init);
 
-        loading = new ProgressDialog(Main.this);  // 프로그래스
         appInfo = new AppInfo();  // 데이터
+       // appInfo = (AppInfo) getApplicationContext();
+        AppInfo.TargetContext = this;  // 타겟 Context 변경
+
+        AppInfo.StateApp = true;  // 앱 실행상태로 변경
         layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         init_Layout();
 
+    }
+
+    public void Gcminit()
+    {
+        icon_changeTab("tab1");
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        add_Linear.removeAllViews();
+        add_Linear.addView(tab1_.in_layout,layoutParams);
+
+        tab1_.all_tab1();
     }
 
     public void init_Layout()        // 초기 세팅
@@ -165,14 +180,26 @@ public class Main extends Activity
         startActivity(intent);
 
     }
-
+/*
     public String Get_DeviceID()
     {
         try
         {
             // 디바이스 ID 검사
             manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            return manager.getDeviceId();
+
+            Log.i("ids","true");
+            Log.i("ids"," id1 : "+manager.getDeviceId()+ "\nid2 : "+android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID)
+            + "\nid3 : "+ Build.class.getField("SERIAL").get(null));
+
+            if(manager.getDeviceId() != null)
+            {
+                return manager.getDeviceId();
+            }
+            else
+            {
+                return android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            }
         }
         catch (Exception e)
         {
@@ -181,7 +208,7 @@ public class Main extends Activity
             return null;
         }
     }
-
+*/
     // 보기 선택 (전체 , 내글)
     public void tab1_btn_category(View v)
     {

@@ -1,26 +1,15 @@
 package com.moduse.nakk;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,55 +48,6 @@ public class Signup extends AppCompatActivity
     CheckBox User_agee2;
 
 
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "MainActivity";
-
-    private Button mRegistrationButton;
-    private ProgressBar mRegistrationProgressBar;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private TextView mInformationTextView;
-
-    String token;
-
-    /**
-     * Instance ID를 이용하여 디바이스 토큰을 가져오는 RegistrationIntentService를 실행한다.
-     */
-
-
-
-    public void getInstanceIdToken() {
-        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
-    }
-    /**
-     * LocalBroadcast 리시버를 정의한다. 토큰을 획득하기 위한 READY, GENERATING, COMPLETE 액션에 따라 UI에 변화를 준다.
-     */
-
-
-
-    public void registBroadcastReceiver(){
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-
-                if(action.equals(QuickstartPreferences.REGISTRATION_READY)){
-
-                } else if(action.equals(QuickstartPreferences.REGISTRATION_GENERATING)){
-
-                } else if(action.equals(QuickstartPreferences.REGISTRATION_COMPLETE)){
-                    token = intent.getStringExtra("token");
-                   // Log.i("TTT",token);
-                }
-
-            }
-        };
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -115,7 +55,6 @@ public class Signup extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
 
-        registBroadcastReceiver();
         appInfo = new AppInfo();   // info 데이터 초기화
 
         loading = new ProgressDialog(Signup.this);  //  다이얼로그 초기화
@@ -131,80 +70,33 @@ public class Signup extends AppCompatActivity
         User_agee1 = (CheckBox) findViewById(R.id.signup_check_agee1);
         User_agee2 = (CheckBox) findViewById(R.id.signup_check_agee2);
 
-        try
-        {
-            // 디바이스 ID 검사
-            TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            user_device = manager.getDeviceId();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-         getInstanceIdToken();
-
-    }
-
-    /**
-     * 앱이 실행되어 화면에 나타날때 LocalBoardcastManager에 액션을 정의하여 등록한다.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_READY));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_GENERATING));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
-
-    }
-
-    /**
-     * 앱이 화면에서 사라지면 등록된 LocalBoardcast를 모두 삭제한다.
-     */
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
+        AppInfo.TargetContext = this;
 
 
-    /**
-     * Google Play Service를 사용할 수 있는 환경이지를 체크한다.
-     */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
     }
 
 
     // 버튼 리스너
     public void btn_signup_submit(View v)
     {
+
         Check_validity();
+        StartShow();
     }
 
     // 회원가입 유효성 항목 체크후 -> 가입 PHP gka
     public void Check_validity()
     {
-        String push = token;
+
+        user_device = appInfo.Get_DeviceID();         //  디바이스 아이디 가져오기
+
+        String push = AppInfo.MY_PUSHID;
         String id = user_id.getText().toString();
         String pass = user_pass.getText().toString();
         String repass = user_repass.getText().toString();
         String nickname = user_nickname.getText().toString();
         String email = user_email.getText().toString();
+
 
         boolean agee_1 = User_agee1.isChecked();
         boolean agee_2 = User_agee2.isChecked();
@@ -264,7 +156,7 @@ public class Signup extends AppCompatActivity
     }
 
 
-    private void insertToDatabase(String pushid ,String id, String pass, final String deviceid, String nickname, String email)
+    private void insertToDatabase(String pushid ,String id, String pass, String deviceid, String nickname, String email)
     {
 
         class InsertData extends AsyncTask<String, Void, String> {
@@ -274,13 +166,14 @@ public class Signup extends AppCompatActivity
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                StartShow();
             }
 
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
                 StopShow();
+
+
                 if(result.toString().equals("SUCCESS"))
                 {
                     finish();
@@ -293,7 +186,7 @@ public class Signup extends AppCompatActivity
                 }
                 else if(result.toString().equals("CHARFAILURE"))
                 {
-
+                    Toast.makeText(getApplicationContext(), "모든 항목을 작성해야 합니다.", Toast.LENGTH_LONG).show();
                 }
                 else
                 {
@@ -320,6 +213,13 @@ public class Signup extends AppCompatActivity
                     String device = params[3];
                     String nickname = params[4];
                     String email = params[5];
+
+                    Log.i("Value","push : "+push);
+                    Log.i("Value","id : "+id);
+                    Log.i("Value","pass : "+pass);
+                    Log.i("Value","device : "+device);
+                    Log.i("Value","nickname : "+nickname);
+                    Log.i("Value","email : "+email);
 
 
                    // Log.i("result "," /push :"+push+" /id :"+id+" /pass :"+pass+" /device :"+device+" /nickname :"+nickname+" /email :"+email);

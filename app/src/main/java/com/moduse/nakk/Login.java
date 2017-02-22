@@ -2,17 +2,13 @@ package com.moduse.nakk;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,8 +16,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -57,39 +52,36 @@ public class Login extends AppCompatActivity {
 
     private InputMethodManager imm;
 
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "MainActivity";
-
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
-
+    //GCM
+    GoogleCloudMessaging gcm;
+    String SENDER_ID;
     String token;
 
-    public void getInstanceIdToken() {
-        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
-    }
 
-    public void registBroadcastReceiver(){
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+
+
+    // 푸시 아이디 가져오기
+    public void Pushtoken()
+    {
+        SENDER_ID = getString(R.string.gcm_defaultSenderId);;
+        new AsyncTask<Void, Void, String>() {
             @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-
-                if(action.equals(QuickstartPreferences.REGISTRATION_READY)){
-
-                } else if(action.equals(QuickstartPreferences.REGISTRATION_GENERATING)){
-
-                } else if(action.equals(QuickstartPreferences.REGISTRATION_COMPLETE)){
-                    token = intent.getStringExtra("token");
-                   // Log.i("TTT",token);
+            protected String doInBackground(Void... params) {
+                try {
+                    token = gcm.register(SENDER_ID);
+                    AppInfo.MY_PUSHID = token;
+                   // Log.i("Pushtoken",token);
+                } catch (IOException ex) {
                 }
-
+                return "";
             }
-        };
+
+            @Override
+            protected void onPostExecute(String msg)
+            {
+            }
+        }.execute(null, null, null);
+
     }
 
     @Override
@@ -98,7 +90,6 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        registBroadcastReceiver();
         appInfo = new AppInfo();
 
         loading = new ProgressDialog(Login.this);
@@ -119,48 +110,10 @@ public class Login extends AppCompatActivity {
             user_pass.setText(setting.getString("PW", ""));
             loginsave.setChecked(true);
         }
-
-        getInstanceIdToken();
+        gcm = GoogleCloudMessaging.getInstance(this);
+        Pushtoken();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_READY));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_GENERATING));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
-
-    }
-
-    /**
-     * 앱이 화면에서 사라지면 등록된 LocalBoardcast를 모두 삭제한다.
-     */
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
-
-    /**
-     * Google Play Service를 사용할 수 있는 환경이지를 체크한다.
-     */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 
 
     public void btn_login(View v)

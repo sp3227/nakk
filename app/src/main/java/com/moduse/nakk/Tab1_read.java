@@ -77,6 +77,7 @@ public class Tab1_read extends Activity
     int tmpIndex;
     TextView tmpLikecount;
 
+
     Tab1_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
@@ -98,7 +99,7 @@ public class Tab1_read extends Activity
         Vector<NameValuePair> list = new Vector<NameValuePair>();
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
-        list.add(new BasicNameValuePair("deviceid",((Main) Main.MinContext).Get_DeviceID()));
+        list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -130,7 +131,7 @@ public class Tab1_read extends Activity
         Vector<NameValuePair> list = new Vector<NameValuePair>();
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
-        list.add(new BasicNameValuePair("deviceid",((Main) Main.MinContext).Get_DeviceID()));
+        list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -162,7 +163,7 @@ public class Tab1_read extends Activity
         Vector<NameValuePair> list = new Vector<NameValuePair>();
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
-        list.add(new BasicNameValuePair("deviceid",((Main) Main.MinContext).Get_DeviceID()));
+        list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -194,7 +195,7 @@ public class Tab1_read extends Activity
         Vector<NameValuePair> list = new Vector<NameValuePair>();
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("talkidx",talk_idx));
-        list.add(new BasicNameValuePair("deviceid",((Main) Main.MinContext).Get_DeviceID()));
+        list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -228,7 +229,7 @@ public class Tab1_read extends Activity
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("talk_idx",talk_idx));
         list.add(new BasicNameValuePair("talk_writeid",device_id_taget));
-        list.add(new BasicNameValuePair("liker_deviceid",((Main) Main.MinContext).Get_DeviceID()));
+        list.add(new BasicNameValuePair("liker_deviceid",appInfo.Get_DeviceID()));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -433,6 +434,7 @@ public class Tab1_read extends Activity
                         customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
                         list.setAdapter(customAdapter);
 
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -494,13 +496,14 @@ public class Tab1_read extends Activity
                     }
 
                     customAdapter.notifyDataSetChanged();
+                    AppInfo.onGcmUdate = false;
                     ((Main)Main.MinContext).StopShow();   // 다이얼로그 종료
                     break;
                 }
                 case phptype_TalkDELETE :  //삭제
                 {
                     Log.i("str_del",str);
-                    Log.i("Get_DeviceID",((Main) Main.MinContext).Get_DeviceID());
+                    Log.i("Get_DeviceID",appInfo.Get_DeviceID());
                     if(str.toString().equals("SUCCESS"))
                     {
                         Toast.makeText(Main.MinContext,"해당 글이 삭제되었습니다.",Toast.LENGTH_SHORT).show();
@@ -581,6 +584,7 @@ public class Tab1_read extends Activity
             final TalkData data = items.get(position);
             final int index = position;
 
+
             if(convertView == null)
             {
                 convertView = m_inflager.inflate(R.layout.item_tab1, null);
@@ -601,6 +605,9 @@ public class Tab1_read extends Activity
                 holder.View_user_nickname = (TextView) convertView.findViewById(R.id.tab1_item_nickname);
                 holder.View_user_profile = (ImageView) convertView.findViewById(R.id.tab1_item_prfileimg);
                 holder.View_delete = (LinearLayout) convertView.findViewById(R.id.tab1_item_delete);
+                holder.View_fix = (LinearLayout) convertView.findViewById(R.id.tab1_item_fix);
+
+
 
                 convertView.setTag(holder);
             }
@@ -620,7 +627,9 @@ public class Tab1_read extends Activity
                 {
                     // 이미지 있음
                    // holder.View_img.setVisibility(View.VISIBLE);
-                    Glide.with(convertView.getContext()).load(data.GET_talk_img()).diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().thumbnail(0.5f).into(holder.View_img);
+
+                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).dontAnimate().diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().thumbnail(0.5f).into(holder.View_img);
+
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
@@ -655,9 +664,8 @@ public class Tab1_read extends Activity
                     public void onClick(View v) {
                         // tmpLikecount = holder.View_likecount;
                         tmpIndex = index;
-                        like_talk(data.GET_talk_idx(), data.GET_user_id(), ((Main) Main.MinContext).Get_DeviceID());
+                        like_talk(data.GET_talk_idx(), data.GET_user_id(), appInfo.Get_DeviceID());
 
-                        Log.i("like", data.GET_talk_idx() + " / " + data.GET_user_id() + " / " + ((Main) Main.MinContext).Get_DeviceID());
                     }
                 });
 
@@ -744,33 +752,49 @@ public class Tab1_read extends Activity
                 // 자랑하기 작성자 닉네임 부분
                 holder.View_user_nickname.setText(data.GET_user_nickname());
                 // 자랑하기 작성자 프로필 사진 부분(클릭이벤트 필요)
-                if(data.GET_user_profile().equals("none") || data.GET_user_profile() == "" || data.GET_user_profile() == null)
+
+                if(data.GET_user_profile().equals("none"))
                 {
-                    Glide.with(convertView.getContext()).load(R.drawable.textimg).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
-                }
-                else
-                {
-                    // 이미지 있음
-                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
-                    // 사진 클릭 리스너
+
+                    Glide.with(convertView.getContext()).load(R.drawable.profile_default).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
+
+                        // 사진 클릭 리스너(사진 없음)
                     holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()
                     {
                         @Override
                         public void onClick(View v)
                         {
-                            ((Main) Main.MinContext).View_ZoomImage(data.GET_user_profile());
+                            Toast.makeText(Main.MinContext,"프로필 사진이 없습니다.",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                else
+                {
+                    // 이미지 있음
+
+                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
+
+                        // 사진 클릭 리스너(사진 있음)
+                    holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                           ((Main) Main.MinContext).View_ZoomImage(data.GET_user_profile());
                         }
                     });
                 }
 
                 // 삭제 버튼 (자신 글만 삭제글)
-                if(data.GET_talk_writeid().toString().equals(((Main) Main.MinContext).Get_DeviceID()))
+                if(data.GET_talk_writeid().toString().equals(appInfo.Get_DeviceID()))
                 {
                     holder.View_delete.setVisibility(View.VISIBLE);
+                    holder.View_fix.setVisibility(View.VISIBLE);
                 }
                 else
                 {
                     holder.View_delete.setVisibility(View.GONE);
+                    holder.View_fix.setVisibility(View.GONE);
                 }
 
                 // 삭제버튼 클릭 리스너
@@ -815,9 +839,11 @@ public class Tab1_read extends Activity
             LinearLayout View_loacaionsatatesubmit;
             TextView View_writetime;
             LinearLayout View_delete;
+            LinearLayout View_fix;
 
             TextView View_user_nickname;
             ImageView View_user_profile;
+
         }
     }
 
