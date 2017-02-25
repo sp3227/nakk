@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,8 +64,7 @@ public class Tab1_read extends Activity
     private ListView list = null;
     private CustomAdapter customAdapter = null;
 
-    String talk_type;
-    int last_list_number;
+    String talk_type = "ALL";
 
     // php 핸들러 분류
     final int phptype_TalkALL = 0;
@@ -77,6 +77,9 @@ public class Tab1_read extends Activity
     int tmpIndex;
     TextView tmpLikecount;
 
+    // 페이지 넘머 기록
+    int Last_ListIndex = 0;
+    boolean LastTalkVisibleFlag = false;
 
 
     Tab1_read()
@@ -85,8 +88,6 @@ public class Tab1_read extends Activity
         Inflater = (LayoutInflater) Main.MinContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab1, null);
-
-        list = (ListView) in_layout.findViewById(R.id.tab1_listview);  // 리스트 레이아웃 부분 설정
 
     }
 
@@ -101,6 +102,7 @@ public class Tab1_read extends Activity
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
         list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
+        list.add(new BasicNameValuePair("startnum",String.valueOf(Last_ListIndex)));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -118,8 +120,9 @@ public class Tab1_read extends Activity
             Log.e("Exception Error", e.toString());
         }
 
+       // Remove_list();
+        Make_Talk();
         // 받은 데이터 초기화  (일단 무시)
-        //Remove_list();
     }
 
     public void all_tab1()    //  기본글 불러오기  (전체)
@@ -133,6 +136,7 @@ public class Tab1_read extends Activity
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
         list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
+        list.add(new BasicNameValuePair("startnum",String.valueOf(Last_ListIndex)));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -150,8 +154,9 @@ public class Tab1_read extends Activity
             Log.e("Exception Error", e.toString());
         }
 
+     //   Remove_list();
+        Make_Talk();
         // 리스트 아이템 지우기
-        Remove_list();
     }
 
     public void my_tab1()    //  내글 불러오기  (내글)
@@ -165,6 +170,7 @@ public class Tab1_read extends Activity
         //여기에 전달할 인자를 담는다. String으로 넣는것이 안전하다.
         list.add(new BasicNameValuePair("type",talk_type));
         list.add(new BasicNameValuePair("deviceid",appInfo.Get_DeviceID()));
+        list.add(new BasicNameValuePair("startnum",String.valueOf(Last_ListIndex)));
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "UTF-8");
@@ -182,8 +188,9 @@ public class Tab1_read extends Activity
             Log.e("Exception Error", e.toString());
         }
 
+       // Remove_list();
+        Make_Talk();
         // 리스트 아이템 지우기
-        Remove_list();
     }
 
     // 글 삭제 하기
@@ -215,7 +222,7 @@ public class Tab1_read extends Activity
         }
 
         // 리스트 아이템 지우기
-        Remove_list();
+      //  Remove_list();
     }
 
     // 좋아요 하기
@@ -432,14 +439,13 @@ public class Tab1_read extends Activity
 
                             listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
                         }
-                        customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
-                        list.setAdapter(customAdapter);
 
 
-                    } catch (JSONException e) {
+                    } catch (JSONException e)
+                    {
                         e.printStackTrace();
                     }
-
+                    Last_ListIndex = listItem.size();
                     customAdapter.notifyDataSetChanged();
 
                     // 리스트뷰 인덱스 저장
@@ -496,15 +502,12 @@ public class Tab1_read extends Activity
 
                             listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
                         }
-                        customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
-                        list.setAdapter(customAdapter);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
+                    Last_ListIndex = listItem.size();
                     customAdapter.notifyDataSetChanged();
-                    AppInfo.onGcmUdate = false;
                     ((Main)Main.MinContext).StopShow();   // 다이얼로그 종료
                     break;
                 }
@@ -846,7 +849,7 @@ public class Tab1_read extends Activity
             return convertView;
 
         }
-
+        // 뷰 홀더
        public class ViewHolder
         {
             ImageView View_img;
@@ -867,10 +870,55 @@ public class Tab1_read extends Activity
         }
     }
 
+    // 리스트 초기화 지우기
     public void Remove_list()
     {
         listItem.clear();
-        last_list_number = 0;
+        Last_ListIndex = 0;
+    }
+
+    // 토크 리스트 만들기
+    private void Make_Talk()
+    {
+        if(listItem.size()>0)
+        {
+            return;
+        }
+
+        list = (ListView) in_layout.findViewById(R.id.tab1_listview);  // 리스트 레이아웃 부분 설정
+
+        customAdapter = new CustomAdapter(Main.MinContext, R.id.list_item, listItem);
+        list.setAdapter(customAdapter);
+
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //현재 화면에 보이는 첫번째 리스트 아이템의 번호(firstVisibleItem) + 현재 화면에 보이는 리스트 아이템의 갯수(visibleItemCount)가 리스트 전체의 갯수(totalItemCount) -1 보다 크거나 같을때
+                LastTalkVisibleFlag = ((totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount));
+            }
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                //OnScrollListener.SCROLL_STATE_IDLE은 스크롤이 이동하다가 멈추었을때 발생되는 스크롤 상태입니다.
+                //즉 스크롤이 바닦에 닿아 멈춘 상태에 처리를 하겠다는 뜻
+
+               // Log.i("LIST","1 : "+listItem.size() +"/ 2 : "+Last_ListIndex + "             /   "+scrollState);
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && LastTalkVisibleFlag)
+                {
+                    if(talk_type.toString().equals("ALL"))
+                    {
+                        all_tab1();
+                    }
+                    else if(talk_type.toString().equals("MY"))
+                    {
+                        my_tab1();
+                        //Load_TimeLineItem_All();
+                    }
+                    //TODO 화면이 바닦에 닿을때 처리
+                }
+            }
+
+        });
     }
 
 
