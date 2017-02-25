@@ -81,16 +81,6 @@ public class Main extends Activity
 
     }
 
-    public void Gcminit()
-    {
-        icon_changeTab("tab1");
-
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        add_Linear.removeAllViews();
-        add_Linear.addView(tab1_.in_layout,layoutParams);
-
-        tab1_.all_tab1();
-    }
 
     public void init_Layout()        // 초기 세팅
     {
@@ -180,35 +170,7 @@ public class Main extends Activity
         startActivity(intent);
 
     }
-/*
-    public String Get_DeviceID()
-    {
-        try
-        {
-            // 디바이스 ID 검사
-            manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-            Log.i("ids","true");
-            Log.i("ids"," id1 : "+manager.getDeviceId()+ "\nid2 : "+android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID)
-            + "\nid3 : "+ Build.class.getField("SERIAL").get(null));
-
-            if(manager.getDeviceId() != null)
-            {
-                return manager.getDeviceId();
-            }
-            else
-            {
-                return android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-
-            return null;
-        }
-    }
-*/
     // 보기 선택 (전체 , 내글)
     public void tab1_btn_category(View v)
     {
@@ -286,9 +248,19 @@ public class Main extends Activity
     public void tab1_btn_write(View v)
     {
         Intent intent = new Intent(this.getApplicationContext(), Tab_addtalk.class);
+        intent.putExtra("add_type","ADD");
+        intent.putExtra("talk_id","none");
         startActivity(intent);
     }
 
+    // 자랑하기 수정하기
+    public void tab1_fix(String talk_id)
+    {
+        Intent intent = new Intent(this.getApplicationContext(), Tab_addtalk.class);
+        intent.putExtra("add_type","FIX");
+        intent.putExtra("talk_id",talk_id);
+        startActivity(intent);
+    }
 
 
 

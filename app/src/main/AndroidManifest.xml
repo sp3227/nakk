@@ -18,6 +18,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+    <!-- 테스크 권한 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />​
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -59,33 +63,17 @@
                 <category android:name="net.saltfactory.demo.gcm" />
             </intent-filter>
         </receiver>
-        <!-- [END gcm_receiver] -->
 
-        <!-- [START gcm_listener_service] -->
-        <service
-            android:name=".MyGcmListenerService"
-            android:exported="false">
+        <!-- GCM 관련 -->
+        <receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.musoft1215.ranbbitalk.gcm" />
             </intent-filter>
-        </service>
-        <!-- [END gcm_listener_service] -->
-
-        <!-- [START instanceId_listener_service] -->
-        <service
-            android:name=".MyInstanceIDListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
-            </intent-filter>
-        </service>
-        <!-- [END instanceId_listener_service] -->
-
-        <!-- [START gcm_registration_service] -->
-        <service
-            android:name=".RegistrationIntentService"
-            android:exported="false"></service>
-        <!-- [END gcm_registration_service] -->
+        </receiver>
+        <service android:name=".GcmIntentService" />
 
 
     </application>

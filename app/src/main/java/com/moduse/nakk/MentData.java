@@ -35,7 +35,16 @@ public class MentData
     public String GET_talk_writeid(){return talk_writeid;}
     public String GET_menter_id(){return menter_id;}
     public String GET_menter_nickname(){return menter_nickname;}
-    public String GET_menter_img(){return proURL+menter_img;}
+    public String GET_menter_img()
+    {
+        if(menter_img.toString().equals("none"))
+        {
+            return menter_img;
+        }
+        else {
+            return proURL + menter_img;
+        }
+    }
     public String GET_ment_addtime(){return ment_addtime;}
     public String GET_ment_data(){return ment_data;}
 

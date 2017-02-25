@@ -78,6 +78,7 @@ public class Tab1_read extends Activity
     TextView tmpLikecount;
 
 
+
     Tab1_read()
     {
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
@@ -440,6 +441,13 @@ public class Tab1_read extends Activity
                     }
 
                     customAdapter.notifyDataSetChanged();
+
+                    // 리스트뷰 인덱스 저장
+                    if(AppInfo.SaveIndex)
+                    {
+                        list.setSelection(AppInfo.SaveIndexNum);
+                        AppInfo.SaveIndex = false;
+                    }
                     ((Main)Main.MinContext).StopShow();   // 다이얼로그 종료
                     break;
                 }
@@ -583,6 +591,7 @@ public class Tab1_read extends Activity
             // final View view;
             final TalkData data = items.get(position);
             final int index = position;
+            AppInfo.SaveIndexNum = position;
 
 
             if(convertView == null)
@@ -628,7 +637,7 @@ public class Tab1_read extends Activity
                     // 이미지 있음
                    // holder.View_img.setVisibility(View.VISIBLE);
 
-                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).dontAnimate().diskCacheStrategy(DiskCacheStrategy.SOURCE).crossFade().thumbnail(0.5f).into(holder.View_img);
+                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE).crossFade().thumbnail(0.5f).into(holder.View_img);
 
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
@@ -785,7 +794,8 @@ public class Tab1_read extends Activity
                     });
                 }
 
-                // 삭제 버튼 (자신 글만 삭제글)
+
+                // 삭제 & 수정 버튼 (자신 글만 삭제글)
                 if(data.GET_talk_writeid().toString().equals(appInfo.Get_DeviceID()))
                 {
                     holder.View_delete.setVisibility(View.VISIBLE);
@@ -816,6 +826,16 @@ public class Tab1_read extends Activity
                                 })
                         .setPositiveButton("아니요",null)
                         .show();
+                    }
+                });
+
+                // 수정하기 클릭 리스너
+                holder.View_fix.setOnClickListener(new LinearLayout.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        ((Main)Main.MinContext).tab1_fix(data.GET_talk_idx());
                     }
                 });
 

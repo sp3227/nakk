@@ -2,12 +2,17 @@ package com.moduse.nakk;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -26,21 +31,40 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
 
     AppInfo appInfo;   // 앱 데이터
 
+    //GPS 부분
+    private LocationManager locationManager;
+    LocationListener locationListener;
+    boolean isGPSEnabled;
+
+    private final int GPS_START = 0;
+    private final int GPS_RESET = 1;
 
     //토크에서 넘겨받은 인텐트 데이터
     private Intent talkintent;
 
-    // 토크에서 가져온 포인트 좌표
+    // 맵 유형 타입
     String Map_type;
-    double Talk_Point_latitude;
-    double Talk_Point_longitude;
+
+    // 토크에서 가져온 포인트 좌표
+    double Talk_Point_latitude = 0;
+    double Talk_Point_longitude = 0;
     String Talk_Point_domicile;
+
+    // 수정하기에서 가져온 포인트
+    double Fix_Point_latitude = 0;
+    double Fix_Point_longitude = 0;
+
 
     // 다음 맵부분
     MapView mapView ;   // 다음 맵
     RelativeLayout DaumLaout;
 
     ProgressDialog loading;   // 프로그레스 설정
+
+    // 포인트 찍기 텝1 작성 위치 부분
+    boolean TagetPoint_state = false;
+
+    LinearLayout PointSelect_Menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -55,34 +79,187 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
         // 다이얼로그 초기화
         InitShow();
 
-        // 다음맵 초기화 & 레이아웃 설정
-        mapView = new MapView(this);
-        mapView.setDaumMapApiKey(appInfo.Get_DaumKey());   //  다음 키설정
-        DaumLaout = (RelativeLayout) findViewById(R.id.map_view);  // 레이아웃 설정
 
+
+        PointSelect_Menu = (LinearLayout) findViewById(R.id.View_point_linear);
+
+        // GPS 확인
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);  // LocationManager  객체 얻어오기
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);   // 사용 체크 GPS2
 
         // 토크에서 데이터 가져오기
         talkintent = getIntent();
+
         Map_type = talkintent.getStringExtra("type");
 
-        if(Map_type.toString().equals("view_point")) // 토크에서 포인트 보기면 좌표값 저장
+        if (Map_type.toString().equals("view_point")) // 토크에서 포인트 보기면 좌표값 저장
         {
-            Talk_Point_latitude = talkintent.getDoubleExtra("latitude",0);
-            Talk_Point_longitude = talkintent.getDoubleExtra("longitude",0);
+            // 다음맵 초기화 & 레이아웃 설정
+            mapView = new MapView(this);
+            mapView.setDaumMapApiKey(appInfo.Get_DaumKey());   //  다음 키설정
+            DaumLaout = (RelativeLayout) findViewById(R.id.map_view);  // 레이아웃 설정
+
+            PointSelect_Menu.setVisibility(View.GONE);
+            Talk_Point_latitude = talkintent.getDoubleExtra("latitude", 0);
+            Talk_Point_longitude = talkintent.getDoubleExtra("longitude", 0);
 
             Find_domicile_start(Talk_Point_latitude, Talk_Point_longitude);
 
-            DauMap_Strat();
-
+            DaumMap_Strat();
         }
+        else if(Map_type.toString().equals("point_select"))
+        {
+
+            // 다음맵 초기화 & 레이아웃 설정
+            mapView = new MapView(this);
+            mapView.setDaumMapApiKey(appInfo.Get_DaumKey());   //  다음 키설정
+            DaumLaout = (RelativeLayout) findViewById(R.id.map_view);  // 레이아웃 설정
+
+            PointSelect_Menu.setVisibility(View.VISIBLE);
+
+            My_locationinit(GPS_START);
+        }
+        else if(Map_type.toString().equals("point_select_fix"))
+        {
+
+            // 수정하기에서 넘어온 좌표 저장
+            Fix_Point_latitude = talkintent.getDoubleExtra("fix_latitude",0);
+            Fix_Point_longitude = talkintent.getDoubleExtra("fix_longitude",0);
+
+
+            // 다음맵 초기화 & 레이아웃 설정
+            mapView = new MapView(this);
+            mapView.setDaumMapApiKey(appInfo.Get_DaumKey());   //  다음 키설정
+            DaumLaout = (RelativeLayout) findViewById(R.id.map_view);  // 레이아웃 설정
+
+            PointSelect_Menu.setVisibility(View.VISIBLE);
+
+            DaumMap_Strat();
+        }
+
 
     }
 
+    // 포인트 찍기 완료 버튼
+    public void Point_select_submit(View v)
+    {
 
+        if(Map_type.toString().equals("point_select"))
+        {
+            //  인텐트 setResult
 
+            if (Talk_Point_latitude != 0 && Talk_Point_longitude != 0 && TagetPoint_state) {
+                talkintent.putExtra("point_state", "true");
+                talkintent.putExtra("point_latitude", Talk_Point_latitude);
+                talkintent.putExtra("point_longitude", Talk_Point_longitude);
+                talkintent.putExtra("point_address", Talk_Point_domicile);
+                setResult(RESULT_OK, talkintent);
+                DaumLaout.removeAllViews();
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "찍은 포인트가 없습니다!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(Map_type.toString().equals("point_select_fix"))
+        {
+            if (Fix_Point_latitude != 0 && Fix_Point_longitude != 0 && TagetPoint_state) {
+                talkintent.putExtra("point_state", "true");
+                talkintent.putExtra("point_latitude", Fix_Point_latitude);
+                talkintent.putExtra("point_longitude", Fix_Point_longitude);
+                talkintent.putExtra("point_address", Talk_Point_domicile);
+                setResult(RESULT_OK, talkintent);
+                DaumLaout.removeAllViews();
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "찍은 포인트가 없습니다!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+    public void My_locationinit( int type)  // MY GPS 받아오기
+    {
+        StartShow();
+
+        switch (type) {
+            case GPS_START: {
+                if (isGPSEnabled) {
+                    locationListener = new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            //status.setText("위도: "+ location.getLatitude() + "\n경도: " + location.getLongitude() + "\n고도: " + location.getAltitude());
+                            appInfo.Set_Latitude(location.getLatitude());
+                            appInfo.Set_Longitude(location.getLongitude());
+
+                            // 위치 정보를 가져올 수 있는 메소드입니다.
+                            // 위치 이동이나 시간 경과 등으로 인해 호출됩니다.
+                            // 최신 위치는 location 파라메터가 가지고 있습니다.
+                            //최신 위치를 가져오려면, location 파라메터를 이용하시면 됩니다.
+
+                            DaumMap_Strat();  // 다음맵 시작
+                        }
+
+                        @Override
+                        public void onStatusChanged(String s, int i, Bundle bundle) {
+                        } // 위치 공급자의 상태가 바뀔 때 호출 됩니다.
+
+                        @Override
+                        public void onProviderEnabled(String s) {
+                        } // 위치 공급자가 사용 가능해질(enabled) 때 호출 됩니다.
+
+                        @Override
+                        public void onProviderDisabled(String s) {
+                        } // 위치 공급자가 사용 불가능해질(disabled) 때 호출 됩니다.
+                    };
+
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 오차범위 있음
+                            100, // 통지사이의 최소 시간간격 (miliSecond)
+                            100, locationListener); // 통지사이의 최소 변경거리 (m)
+
+                    //locationManager.removeUpdates(locationListener);  // GPS 닫기
+                } else if (!isGPSEnabled) {
+                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정을 확인해주세요.", Toast.LENGTH_SHORT).show();
+
+                    DaumMap_Strat();  // 다음맵 시작
+                }
+                break;
+            }
+            case GPS_RESET:
+            {
+                if (isGPSEnabled) {
+                    locationListener = new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            appInfo.Set_Latitude(location.getLatitude());
+                            appInfo.Set_Longitude(location.getLongitude());
+
+                            onMapViewInitialized(mapView);
+                        }
+
+                        @Override
+                        public void onStatusChanged(String s, int i, Bundle bundle) { } // 위치 공급자의 상태가 바뀔 때 호출 됩니다.
+
+                        @Override
+                        public void onProviderEnabled(String s) {} // 위치 공급자가 사용 가능해질(enabled) 때 호출 됩니다.
+
+                        @Override
+                        public void onProviderDisabled(String s) { } // 위치 공급자가 사용 불가능해질(disabled) 때 호출 됩니다.
+                    };
+
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, // 등록할 오차범위 있음
+                            100, // 통지사이의 최소 시간간격 (miliSecond)
+                            100, locationListener); // 통지사이의 최소 변경거리 (m)
+
+                    //locationManager.removeUpdates(locationListener);  // GPS 닫기
+                } else if (!isGPSEnabled) {
+                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+        }
+    }
 
     // 다음 지도 시작
-    public void DauMap_Strat()
+    public void DaumMap_Strat()
     {
         mapView.setMapType(MapView.MapType.Hybrid);  // 맵 타입 하이드리브
         DaumLaout.addView(mapView);
@@ -112,7 +289,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
         t.start();
     }
 
-    public void Find_domicile_start(Double lat, double lng)
+    public void Find_domicile_start(double lat, double lng)
     {
         // 주소 찾기 초기화
         MapPoint clsPoint = MapPoint.mapPointWithGeoCoord( lat, lng );
@@ -129,20 +306,48 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
     @Override
     public void onMapViewInitialized(MapView mapView)  // 맵 초기 설정
     {
-        // 토크에서 가져온 GPS 좌표값으로 중심점 마춤
-        mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude), 5, true); // GPS 설정 안되있음 서울로 마춰놈  // 줌레벨
+        if(Map_type.toString().equals("view_point"))
+        {
+            // 토크에서 가져온 GPS 좌표값으로 중심점 마춤
+            mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude), 5, true); // GPS 설정 안되있음 서울로 마춰놈  // 줌레벨
 
-        // 토크에서 가져온 마크 적용
-        MapPOIItem marker = new MapPOIItem();
+            // 토크에서 가져온 마크 적용
+            MapPOIItem marker = new MapPOIItem();
 
-        marker.setItemName("[여기]");
-        marker.setTag(0);
-        marker.setMapPoint(MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude));
-        marker.setMarkerType(MapPOIItem.MarkerType.YellowPin); // 기본으로 제공하는 BluePin 마커 모양.
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-        marker.setCustomImageAutoscale(false);
+            marker.setItemName("[여기]");
+            marker.setTag(0);
+            marker.setMapPoint(MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude));
+            marker.setMarkerType(MapPOIItem.MarkerType.YellowPin); // 기본으로 제공하는 BluePin 마커 모양.
+            marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+            marker.setCustomImageAutoscale(false);
 
-        mapView.addPOIItem(marker);
+            mapView.addPOIItem(marker);
+        }
+        else if(Map_type.toString().equals("point_select"))
+        {
+            double Latitude = appInfo.Get_Latitude();
+            double Longitude = appInfo.Get_Longitude();
+
+            mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Latitude, Longitude), 2, true); // 지도 중심점 자기 위치로 변경  // 줌레벨
+        }
+        else if(Map_type.toString().equals("point_select_fix"))
+        {
+            // 토크수정에서 가져온 GPS 좌표값으로 중심점 마춤
+            mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Fix_Point_latitude, Fix_Point_longitude), 5, true); // GPS 설정 안되있음 서울로 마춰놈  // 줌레벨
+
+            // 토크에서 가져온 마크 적용
+            MapPOIItem marker = new MapPOIItem();
+
+            marker.setItemName("[여기]");
+            marker.setTag(0);
+            marker.setMapPoint(MapPoint.mapPointWithGeoCoord(Fix_Point_latitude, Fix_Point_longitude));
+            marker.setMarkerType(MapPOIItem.MarkerType.YellowPin); // 기본으로 제공하는 BluePin 마커 모양.
+            marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+            marker.setCustomImageAutoscale(false);
+
+            mapView.addPOIItem(marker);
+        }
+
 
 
 
@@ -165,10 +370,60 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
     {
         //mapView.removeAllPOIItems();
 
-        MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
-        MapPoint.PlainCoordinate mapPointScreenLocation = mapPoint.getMapPointScreenLocation();
+        if(Map_type.toString().equals("point_select"))  // 포인트 찍기
+        {
+            MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
+            MapPoint.PlainCoordinate mapPointScreenLocation = mapPoint.getMapPointScreenLocation();
 
-        Log.i("mapPoint","Daum mapPoint :"+MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude));
+           // Log.i("mapPoint", "Daum mapPoint :" + MapPoint.mapPointWithGeoCoord(Talk_Point_latitude, Talk_Point_longitude));
+
+            Talk_Point_latitude = mapPointGeo.latitude;
+            Talk_Point_longitude =  mapPointGeo.longitude;
+
+            MapPOIItem marker = new MapPOIItem();
+
+            marker.setItemName("포인트");
+            marker.setTag(0);
+            marker.setMapPoint(MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude, mapPointGeo.longitude));
+            marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+            marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+            marker.setCustomImageAutoscale(false);
+
+            TagetPoint_state = true;
+
+            // 주소찾기
+            Find_domicile_start(Talk_Point_latitude, Talk_Point_longitude);
+            mapView.addPOIItem(marker);
+        }
+        else if(Map_type.toString().equals("point_select_fix"))  //수정 포인트 찍기
+        {
+            // 기존 포인트 삭제
+            mapView.removeAllPOIItems();
+
+            //
+            MapPoint.GeoCoordinate mapPointGeo = mapPoint.getMapPointGeoCoord();
+            MapPoint.PlainCoordinate mapPointScreenLocation = mapPoint.getMapPointScreenLocation();
+
+            //주소
+            Fix_Point_latitude = mapPointGeo.latitude;
+            Fix_Point_longitude =  mapPointGeo.longitude;
+
+            // 토크에서 가져온 마크 적용
+            MapPOIItem marker = new MapPOIItem();
+
+            marker.setItemName("[여기]");
+            marker.setTag(0);
+            marker.setMapPoint(MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude, mapPointGeo.longitude));
+            marker.setMarkerType(MapPOIItem.MarkerType.YellowPin); // 기본으로 제공하는 BluePin 마커 모양.
+            marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+            marker.setCustomImageAutoscale(false);
+
+            Find_domicile_start(Fix_Point_latitude, Fix_Point_longitude);
+
+            TagetPoint_state = true;
+
+            mapView.addPOIItem(marker);
+        }
 
 
     }
@@ -201,16 +456,28 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem)   // 포인트 아이콘 클릭 했을때
     {
-        Toast.makeText(this, mapPOIItem.getItemName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, Talk_Point_domicile, Toast.LENGTH_SHORT).show();
+        mapPOIItem.setItemName(Talk_Point_domicile); // 지도 주소로 타이틀 변경
     }
 
     @Override
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem)  // 포인트 아이콘 클릭하고 올라오는 팝업 클릭했을때
     {
-        if(mapPOIItem.getItemName().equals("[여기]"))
+        if(Map_type.toString().equals("view_point"))
         {
-            Toast.makeText(this,Talk_Point_domicile, Toast.LENGTH_SHORT).show();
+            if (mapPOIItem.getItemName().equals(Talk_Point_domicile)) {
+                Toast.makeText(this, Talk_Point_domicile, Toast.LENGTH_SHORT).show();
+            }
         }
+        else if(Map_type.toString().equals("point_select"))
+        {
+            if (mapPOIItem.getItemName().equals("포인트")) {
+                Toast.makeText(this, "여기 찍었음", Toast.LENGTH_SHORT).show();
+            }
+        }
+    {
+
+    }
     }
 
     @Override
@@ -234,6 +501,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
     public void onReverseGeoCoderFoundAddress( MapReverseGeoCoder arg0, String arg1 )
     {
         Talk_Point_domicile = arg1;
+
         // arg1 가 검색된 주소이다.
     }
 
@@ -241,6 +509,11 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
 
     public void tab1_map_close(View v)
     {
+        if(Map_type.toString().equals("view_point"))
+        {
+            AppInfo.SaveIndex = true;
+        }
+        DaumLaout.removeAllViews();
         finish();
     }
 
@@ -252,7 +525,13 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
 
         switch (keyCode) {
             //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
-            case KeyEvent.KEYCODE_BACK: {
+            case KeyEvent.KEYCODE_BACK:
+            {
+                if(Map_type.toString().equals("view_point"))
+                {
+                    AppInfo.SaveIndex = true;
+                }
+                DaumLaout.removeAllViews();
                finish();
             }
         }

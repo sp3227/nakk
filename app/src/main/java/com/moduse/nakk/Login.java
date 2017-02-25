@@ -90,6 +90,8 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        AppInfo.TargetContext = this;
+
         appInfo = new AppInfo();
 
         loading = new ProgressDialog(Login.this);
@@ -112,6 +114,8 @@ public class Login extends AppCompatActivity {
         }
         gcm = GoogleCloudMessaging.getInstance(this);
         Pushtoken();
+
+        AppInfo.MY_DEVICEID =  appInfo.Get_DeviceID();
     }
 
 

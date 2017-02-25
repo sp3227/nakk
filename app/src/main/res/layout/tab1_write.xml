@@ -12,6 +12,7 @@
         android:background="#191919">
 
         <TextView
+            android:id="@+id/tab1_write_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -130,7 +131,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="#000000"
-            android:text=""
             android:textStyle="bold|italic"
             android:lineSpacingExtra="3dp"
             android:hint="자랑글을 입력해주세요."

@@ -21,7 +21,7 @@
                 android:id="@+id/tab1_item_prfileimg"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@color/colorSora"/>
+                android:src="@drawable/profile_default"/>
 
 
             <LinearLayout
@@ -57,22 +57,51 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/tab1_item_delete"
-                    android:visibility="visible"
-                    android:gravity="center"
-                    android:layout_width="50dp"
-                    android:layout_height="20dp"
-                    android:background="@drawable/btn_grayround">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="bottom|right">
 
-                    <TextView
-                        android:layout_marginRight="3dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                    <LinearLayout
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/tab1_item_fix"
+                        android:layout_width="50dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/btn_grayround2"
                         android:gravity="center"
-                        android:textColor="#ffffff"
-                        android:textSize="15dp"
-                        android:textStyle="italic|bold"
-                        android:text="삭제"/>
+                        android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="3dp"
+                            android:gravity="center"
+                            android:text="수정"
+                            android:textColor="#ffffff"
+                            android:textSize="15dp"
+                            android:textStyle="italic|bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/tab1_item_delete"
+                        android:layout_width="50dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/btn_grayround"
+                        android:gravity="center"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="3dp"
+                            android:gravity="center"
+                            android:text="삭제"
+                            android:textColor="#ffffff"
+                            android:textSize="15dp"
+                            android:textStyle="italic|bold" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

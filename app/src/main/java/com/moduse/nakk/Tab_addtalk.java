@@ -21,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +39,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -54,6 +58,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -77,17 +82,22 @@ public class Tab_addtalk extends Activity
     ImageView layout_location;
     ImageView layout_img;
     EditText edit_data;
+    TextView title;
 
     // 입력데이터
     String talk_data;
 
     // 인텐트 넘겨받는값
-    String WriteType ="ADD";
+    String WriteType;
+    String TalkIdx;  // 수정떄만 사용
 
     //토크 부분
+    String Talk_type;
     String Talk_idx;
     String Talkwrite_id;
 
+    // 토크 수정부분
+    HashMap<String,Object> fixdata;
 
     // 이미지 부분
     private static final int PICK_FROM_CAMERA = 0;
@@ -113,7 +123,12 @@ public class Tab_addtalk extends Activity
     private FileInputStream mFileInputStream = null;
 
 
-
+    //지도부분
+    private static final int MAP_SELECT = 3;
+    String map_state = "";
+    Double point_latitude = null;
+    Double point_longitude = null;
+    String point_address = "";
 
 
 
@@ -132,6 +147,17 @@ public class Tab_addtalk extends Activity
         layout_location = (ImageView) findViewById(R.id.tab1_add_img_location);
         layout_img = (ImageView) findViewById(R.id.tab1_add_img);
         edit_data = (EditText) findViewById(R.id.tab1_add_edit_data);
+        title = (TextView) findViewById(R.id.tab1_write_title);
+
+        // 인텐트로 넘겨받기
+        Intent intent = getIntent();
+        WriteType = intent.getStringExtra("add_type");
+        TalkIdx = intent.getStringExtra("talk_id");
+
+        fixdata = new HashMap<String, Object>();  // 수정 데이터를 넣을 리스트 선언
+
+
+
 
         // 타입별 초기화 (작성, 수정)
         InitWrite();
@@ -142,20 +168,25 @@ public class Tab_addtalk extends Activity
     //초기화
     public void InitWrite()
     {
-        Talkwrite_id = appInfo.Get_DeviceID();  // 디바이스 ID 가져오기 (작성자 ID)
+        Talkwrite_id = AppInfo.MY_DEVICEID;  // 디바이스 ID 가져오기 (작성자 ID)
 
         // 새로 작성하기
         if(WriteType.toString().equals("ADD"))
         {
+            Talk_type = "ADD";
             talk_data = "";
             edit_data.setText("");
 
             Glide.with(this).load(R.drawable.jarang_upload_location_off).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
             Glide.with(this).load(R.drawable.jarang_upload_img_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_img);
         }
-        else   // 수정하기
+        else if(WriteType.toString().equals("FIX"))   // 수정하기
         {
+            Talk_type = "FIX";
+            title.setText("수정하기");
 
+            // php 함수 시작 기존꺼 불러오기
+            tab1_fix_select();
         }
     }
 
@@ -165,7 +196,22 @@ public class Tab_addtalk extends Activity
     public void tab1_add_btn_location(View v)
     {
 
+        if(WriteType.toString().equals("ADD"))   // 일반  포인트 찍기
+        {
+            Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
+            intent.putExtra("type", "point_select");
+            startActivityForResult(intent, MAP_SELECT);
+        }
+        else if(WriteType.toString().equals("FIX") && fixdata.get("talk_locationstate").toString().equals("true"))  // 기존에 위치가 있으면
+        {
+            Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
+            intent.putExtra("type", "point_select_fix");
+            intent.putExtra("fix_latitude",point_latitude);
+            intent.putExtra("fix_longitude",point_longitude);
+            startActivityForResult(intent, MAP_SELECT);
+        }
     }
+
 
     //사진 찍기 버튼
     public void tab1_add_btn_img(View v)
@@ -177,22 +223,73 @@ public class Tab_addtalk extends Activity
     public void tab1_add_btn_submit(View v)
     {
 
+        if(WriteType.toString().equals("ADD")) {
+            talk_data = edit_data.getText().toString();
+            ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
 
-        talk_data = edit_data.getText().toString();
+            post.add(new BasicNameValuePair("talkwriteid", Talkwrite_id));
+            post.add(new BasicNameValuePair("talkdata", talk_data));
+            post.add(new BasicNameValuePair("talklocationstate", map_state));
+            post.add(new BasicNameValuePair("talklatitude", String.format("%f", point_latitude)));
+            post.add(new BasicNameValuePair("talklongitude", String.format("%f", point_longitude)));
+
+
+            try {
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+                HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkuploadURL());
+                httpPost.setEntity(entity);
+
+                task = new phpdown();    // 쓰레드 시작
+                task.execute(httpPost);
+
+            } catch (Exception e) {
+                Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+                Log.e("Exception Error", e.toString());
+            }
+        }
+        else if(WriteType.toString().equals("FIX"))
+        {
+            WriteType = "FIXUPDATE";
+            Talk_type = "FIX";
+            talk_data = edit_data.getText().toString();
+
+            ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+            post.add(new BasicNameValuePair("talkid", TalkIdx));
+            post.add(new BasicNameValuePair("talkwriteid", Talkwrite_id));
+            post.add(new BasicNameValuePair("talkdata", talk_data));
+            post.add(new BasicNameValuePair("talklocationstate", map_state));
+            post.add(new BasicNameValuePair("talklatitude", String.format("%f", point_latitude)));
+            post.add(new BasicNameValuePair("talklongitude", String.format("%f", point_longitude)));
+
+
+            try {
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+                HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkfixURL());
+                httpPost.setEntity(entity);
+
+                task = new phpdown();    // 쓰레드 시작
+                task.execute(httpPost);
+
+            } catch (Exception e) {
+                Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+                Log.e("Exception Error", e.toString());
+            }
+        }
+    }
+        // 버튼 아님 수정하기 이전 기록 불러오기
+    public void tab1_fix_select()
+    {
 
         ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
 
-        post.add(new BasicNameValuePair("talkwriteid", Talkwrite_id));
-        post.add(new BasicNameValuePair("talkdata", talk_data));
-        post.add(new BasicNameValuePair("talklocationstate", "none"));
-        post.add(new BasicNameValuePair("talklatitude", "0"));
-        post.add(new BasicNameValuePair("talklongitude", "0"));
+        post.add(new BasicNameValuePair("talk_idx", TalkIdx));
+        post.add(new BasicNameValuePair("talk_writeid", Talkwrite_id));
 
-        Log.i("talk_","talkwriteid : "+Talkwrite_id + " //  talkdata" + talk_data);
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
-            HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkuploadURL());
+            HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkfixselectURL());
             httpPost.setEntity(entity);
 
             task = new phpdown();    // 쓰레드 시작
@@ -346,6 +443,25 @@ public class Tab_addtalk extends Activity
                     f.delete();
                 }
 */
+                break;
+            }
+
+            case MAP_SELECT:
+            {
+
+                map_state = data.getStringExtra("point_state");
+                point_latitude =  data.getDoubleExtra("point_latitude",0);
+                point_longitude = data.getDoubleExtra("point_longitude",0);
+                point_address = data.getStringExtra("point_address");
+
+                if(map_state.toString().equals("true"))
+                {
+                    Glide.with(this).load(R.drawable.jarang_upload_location_on).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
+
+                    Toast.makeText(getApplicationContext(),point_address,Toast.LENGTH_SHORT).show();
+                }
+
+
                 break;
             }
 
@@ -559,30 +675,138 @@ public class Tab_addtalk extends Activity
         protected void onPostExecute(String result) {
             //loading.dismiss();
             Log.i("result",result);
-            if (!result.toString().equals("CHARNULL"))
+            if(WriteType.toString().equals("ADD"))
             {
-                Log.i("TAG", "imgbyte = " + imgbyte);
-                if(imgbyte != null)
+                if (!result.toString().equals("CHARNULL"))
                 {
-                    Talk_idx = result;
-                    upload = new AndroidUploader();
-                    upload.execute();
+                    if (imgbyte != null)
+                    {
+                        Talk_idx = result;
+                        upload = new AndroidUploader();
+                        upload.execute();
+                    }
+                    else
+                    {
+                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
+
+                        finish();
+                    }
+
+                } else {
+                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                else
-                {
-                    Toast.makeText((Main)Main.MinContext,"당신의 자랑질이 등록 되었습니다.",Toast.LENGTH_SHORT).show();
-
-                    ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
-
-                    finish();
-                }
-
             }
-            else
+            else if(WriteType.toString().equals("FIXUPDATE"))
             {
-                Toast.makeText((Main)Main.MinContext,"특수문자는 사용할수 없습니다. 확인해주세요.",Toast.LENGTH_SHORT).show();
+                if (!result.toString().equals("CHARNULL"))
+                {
+                    if (imgbyte != null)
+                    {
+                        Talk_idx = TalkIdx;
+                        upload = new AndroidUploader();
+                        upload.execute();
+                    }
+                    else
+                    {
+                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
+
+                        finish();
+                    }
+
+                } else {
+                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else if(WriteType.toString().equals("FIX"))
+            {
+                String idx_;
+                String talk_idx_;
+                String talk_writeid_;
+                String talk_img_;
+                String talk_data_;
+                String talk_locationstate_;
+                String talk_latitude_;
+                String talk_longitude_;
+                String talk_writetime_;
+
+
+                try {
+                    JSONObject root = new JSONObject(result);
+
+                    JSONArray ja = root.getJSONArray("result");
+
+                    for (int i = 0; i < ja.length(); i++) {
+
+                        JSONObject jo = ja.getJSONObject(i);
+                        idx_ = jo.getString("idx");
+                        talk_idx_ = jo.getString("talk_idx");
+                        talk_writeid_ = jo.getString("talk_writeid");
+                        talk_img_ = jo.getString("talk_img");
+                        talk_data_ = jo.getString("talk_data");
+                        talk_locationstate_ = jo.getString("talk_locationstate");
+                        talk_latitude_ = jo.getString("talk_latitude");
+                        talk_longitude_ = jo.getString("talk_longitude");
+                        talk_writetime_ = jo.getString("talk_writetime");
+
+                        fixdata.put("idx",idx_);
+                        fixdata.put("talk_idx",talk_idx_);
+                        fixdata.put("talk_writeid",talk_writeid_);
+                        fixdata.put("talk_img",talk_img_);
+                        fixdata.put("talk_data",talk_data_);
+                        fixdata.put("talk_locationstate",talk_locationstate_);
+                        fixdata.put("talk_latitude",talk_latitude_);
+                        fixdata.put("talk_longitude",talk_longitude_);
+                        fixdata.put("talk_writetime",talk_writetime_);
+
+                    }
+
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                // UI 적용 함수 시작
+                Fix_UiUpdate();
             }
         }
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  수정하기 불러온거 UI 적용
+
+    public void Fix_UiUpdate()
+    {
+
+        // 이미지 부분
+        if(!fixdata.get("talk_img").toString().equals("none"))
+        {
+           // Glide.with(this).load(R.drawable.jarang_upload_location_off).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
+            Glide.with(this).load(appInfo.Get_Tab1_TalkImgFTP_URL()+fixdata.get("talk_img")).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_img);
+        }
+
+        // 위치 부분
+        if(!fixdata.get("talk_locationstate").equals("none"))
+        {
+            Glide.with(this).load(R.drawable.jarang_upload_location_on).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
+
+            map_state = "true";
+
+            point_latitude = Double.parseDouble(fixdata.get("talk_latitude").toString());
+            point_longitude = Double.parseDouble(fixdata.get("talk_longitude").toString());
+
+        }
+
+        // 내용 부분
+
+        if(!fixdata.get("talk_data").equals(null))
+        {
+            edit_data.setText(fixdata.get("talk_data").toString());
+        }
+
+
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 이미지 업로드 부분
@@ -653,6 +877,13 @@ public class Tab_addtalk extends Activity
             DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
 
             Log.d("ProfileTest", "Enter HttpFileUpload 3-1");
+
+            //토크 타입 올리기 (ADD, FIX)
+            dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
+            dos.writeBytes("Content-Disposition: form-data; name=\"talktype\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(Talk_type);  // 토크 식별 아이디
+            dos.writeBytes(lineEnd);
 
             //텍스트 올리기 (talkidx)
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
@@ -731,8 +962,16 @@ public class Tab_addtalk extends Activity
     // 메인 UI 그려주는 쓰레드 (글 작성 완료)
     public Handler mDrawMainUIHandler = new Handler(){
         public void handleMessage(Message msg){
-            if(msg.what==0){
-                Toast.makeText((Main)Main.MinContext,"당신의 자랑질이 등록 되었습니다.",Toast.LENGTH_SHORT).show();
+            if(msg.what==0)
+            {
+                if(WriteType.toString().equals("ADD"))
+                {
+                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
+                }
+                else if(WriteType.toString().equals("FIX"))
+                {
+                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
+                }
 
                 ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
 

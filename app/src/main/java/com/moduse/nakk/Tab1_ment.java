@@ -542,11 +542,22 @@ public class Tab1_ment  extends Activity
                 if(data.GET_menter_img().equals("none"))
                 {
                     // 프로필 이미지가 없을때
+                    Glide.with(convertView.getContext()).load(R.drawable.profile_default).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_img);
+
+                    // 사진 클릭 리스너(사진 없음)
+                    holder.View_img.setOnClickListener(new ImageView.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Toast.makeText(Main.MinContext,"프로필 사진이 없습니다.",Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
                 else
                 {
                     // 이미지 있음
-                    Glide.with(convertView.getContext()).load(data.GET_menter_img()).centerCrop().bitmapTransform(new CropCircleTransformation(convertView.getContext())).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(0.1f).into(holder.View_img);
+                    Glide.with(convertView.getContext()).load(data.GET_menter_img()).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_img);
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                     {
@@ -622,12 +633,18 @@ public class Tab1_ment  extends Activity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        switch (keyCode) {
-            //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
-            case KeyEvent.KEYCODE_BACK:
+        if( event.getAction() == KeyEvent.ACTION_DOWN )
+        {
+            if( keyCode == KeyEvent.KEYCODE_BACK )
             {
+                AppInfo.SaveIndex = true;
+                Log.i("SaveIndexNum","init : "+AppInfo.SaveIndex);
                 ((Main) Main.MinContext).init_Layout();
                 finish();
+            }
+            if( keyCode == KeyEvent.KEYCODE_HOME )
+            {
+               // Log.d("Android", "Home키 누름");
             }
         }
         return super.onKeyDown(keyCode, event);

@@ -35,6 +35,25 @@
         </RelativeLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/View_point_linear"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="right"
+        android:background="#cdcdcd">
+
+        <TextView
+            android:onClick="Point_select_submit"
+            android:padding="3dp"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="포인트 저장"
+            android:textSize="16dp"
+            android:textStyle="bold|italic"
+            android:textColor="#000000"/>
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/map_view"
