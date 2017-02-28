@@ -638,7 +638,6 @@ public class Tab1_ment  extends Activity
             if( keyCode == KeyEvent.KEYCODE_BACK )
             {
                 AppInfo.SaveIndex = true;
-                Log.i("SaveIndexNum","init : "+AppInfo.SaveIndex);
                 ((Main) Main.MinContext).init_Layout();
                 finish();
             }

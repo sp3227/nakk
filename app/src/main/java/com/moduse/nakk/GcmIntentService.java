@@ -38,8 +38,12 @@ public class GcmIntentService extends IntentService
 
         if(!extras.isEmpty())
         {
-            try {
-                sendNotification(JsonData);
+            try
+            {
+                if(AppInfo.Push_state)
+                {
+                    sendNotification(JsonData);
+                }
             }
             catch (Exception e)
             {

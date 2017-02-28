@@ -182,7 +182,7 @@ public class Signup extends AppCompatActivity
                 }
                 else if(result.toString().equals("DQLICATE"))
                 {
-                    Toast.makeText(getApplicationContext(), "기존에 가입되어 있는 아이디 입니다.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "기존에 등록되어 있는 아이디&디바이스 입니다.", Toast.LENGTH_LONG).show();
                 }
                 else if(result.toString().equals("CHARFAILURE"))
                 {

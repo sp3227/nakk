@@ -21,10 +21,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -64,40 +64,32 @@ import java.util.Locale;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
- * Created by sejung on 2017-02-20.
+ * Created by sejung on 2017-02-27.
  */
 
-public class Tab_addtalk extends Activity
+public class Tab4_fixprofile extends Activity
 {
 
     ProgressDialog loading;
 
-    // 데이터
+    // 앱정보
     AppInfo appInfo;
 
-    //통신 부분
+    //레이아웃
+    ImageView Proimg;
+    EditText edit_nickname;
+    EditText edit_email;
+    EditText edit_fixpass;
+    EditText edit_fixpassre;
+
+    // 통신부분
     phpdown task;
 
-    //레이아웃 설정
-    ImageView layout_location;
-    ImageView layout_img;
-    EditText edit_data;
-    TextView title;
+    // 통신 타입 (로드, 수정)
+    String phptype;
 
-    // 입력데이터
-    String talk_data;
-
-    // 인텐트 넘겨받는값
-    String WriteType;
-    String TalkIdx;  // 수정떄만 사용
-
-    //토크 부분
-    String Talk_type;
-    String Talk_idx;
-    String Talkwrite_id;
-
-    // 토크 수정부분
-    HashMap<String,Object> fixdata;
+    // 데이터를 담을 해시 맵
+    HashMap<String,Object> userdata;
 
     // 이미지 부분
     private static final int PICK_FROM_CAMERA = 0;
@@ -111,8 +103,6 @@ public class Tab_addtalk extends Activity
     private String absoultePath;
     private byte[] imgbyte = null;
 
-
-
     //이미지 업로드 부분
     String lineEnd = "\r\n";
     String twoHyphens = "--";
@@ -122,174 +112,50 @@ public class Tab_addtalk extends Activity
     private AndroidUploader upload;
     private FileInputStream mFileInputStream = null;
 
-
-    //지도부분
-    private static final int MAP_SELECT = 3;
-    String map_state = "";
-    Double point_latitude = null;
-    Double point_longitude = null;
-    String point_address = "";
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab1_write);
+        setContentView(R.layout.tab4_fixprofile);
 
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
 
+        //레이아웃 설정
+        Proimg = (ImageView) findViewById(R.id.fix_setting_proimg);
+        edit_nickname = (EditText) findViewById(R.id.fix_setting_nickname);
+        edit_email = (EditText) findViewById(R.id.fix_setting_email);
+        edit_fixpass = (EditText) findViewById(R.id.fix_setting_pass);
+        edit_fixpassre = (EditText) findViewById(R.id.fix_setting_repass);
 
-        InitShow();
+        edit_fixpass.setText(null);
+        edit_fixpassre.setText(null);
 
-        layout_location = (ImageView) findViewById(R.id.tab1_add_img_location);
-        layout_img = (ImageView) findViewById(R.id.tab1_add_img);
-        edit_data = (EditText) findViewById(R.id.tab1_add_edit_data);
-        title = (TextView) findViewById(R.id.tab1_write_title);
+        userdata = new HashMap<String, Object>();  // 기존 프로필 데이터를 넣을 리스트 선언
 
-        // 인텐트로 넘겨받기
-        Intent intent = getIntent();
-        WriteType = intent.getStringExtra("add_type");
-        TalkIdx = intent.getStringExtra("talk_id");
+        InitShow(2);
 
-        fixdata = new HashMap<String, Object>();  // 수정 데이터를 넣을 리스트 선언
+        php_profile_select();
 
-
-
-
-        // 타입별 초기화 (작성, 수정)
-        InitWrite();
-
+       // Glide.with(this).load(R.drawable.profile_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(Proimg);
 
     }
 
-    //초기화
-    public void InitWrite()
+    // 기존 프로필 불러오기
+    public void php_profile_select()
     {
-        Talkwrite_id = AppInfo.MY_DEVICEID;  // 디바이스 ID 가져오기 (작성자 ID)
-
-        // 새로 작성하기
-        if(WriteType.toString().equals("ADD"))
-        {
-            Talk_type = "ADD";
-            talk_data = "";
-            edit_data.setText("");
-
-            Glide.with(this).load(R.drawable.jarang_upload_location_off).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
-            Glide.with(this).load(R.drawable.jarang_upload_img_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_img);
-        }
-        else if(WriteType.toString().equals("FIX"))   // 수정하기
-        {
-            Talk_type = "FIX";
-            title.setText("수정하기");
-
-            // php 함수 시작 기존꺼 불러오기
-            tab1_fix_select();
-        }
-    }
-
-    ////////// 버튼 설정///////////////
-
-    //위치 찍기 버튼
-    public void tab1_add_btn_location(View v)
-    {
-
-        if(WriteType.toString().equals("ADD"))   // 일반  포인트 찍기
-        {
-            Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
-            intent.putExtra("type", "point_select");
-            startActivityForResult(intent, MAP_SELECT);
-        }
-        else if(WriteType.toString().equals("FIX") && fixdata.get("talk_locationstate").toString().equals("true"))  // 기존에 위치가 있으면
-        {
-            Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
-            intent.putExtra("type", "point_select_fix");
-            intent.putExtra("fix_latitude",point_latitude);
-            intent.putExtra("fix_longitude",point_longitude);
-            startActivityForResult(intent, MAP_SELECT);
-        }
-    }
-
-
-    //사진 찍기 버튼
-    public void tab1_add_btn_img(View v)
-    {
-        showDialog(1);
-    }
-
-    //완료 버튼(서버 통신 시작)
-    public void tab1_add_btn_submit(View v)
-    {
-
-        if(WriteType.toString().equals("ADD")) {
-            talk_data = edit_data.getText().toString();
-            ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
-
-            post.add(new BasicNameValuePair("talkwriteid", Talkwrite_id));
-            post.add(new BasicNameValuePair("talkdata", talk_data));
-            post.add(new BasicNameValuePair("talklocationstate", map_state));
-            post.add(new BasicNameValuePair("talklatitude", String.format("%f", point_latitude)));
-            post.add(new BasicNameValuePair("talklongitude", String.format("%f", point_longitude)));
-
-
-            try {
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
-                HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkuploadURL());
-                httpPost.setEntity(entity);
-
-                task = new phpdown();    // 쓰레드 시작
-                task.execute(httpPost);
-
-            } catch (Exception e) {
-                Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
-                Log.e("Exception Error", e.toString());
-            }
-        }
-        else if(WriteType.toString().equals("FIX"))
-        {
-            WriteType = "FIXUPDATE";
-            Talk_type = "FIX";
-            talk_data = edit_data.getText().toString();
-
-            ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
-
-            post.add(new BasicNameValuePair("talkid", TalkIdx));
-            post.add(new BasicNameValuePair("talkwriteid", Talkwrite_id));
-            post.add(new BasicNameValuePair("talkdata", talk_data));
-            post.add(new BasicNameValuePair("talklocationstate", map_state));
-            post.add(new BasicNameValuePair("talklatitude", String.format("%f", point_latitude)));
-            post.add(new BasicNameValuePair("talklongitude", String.format("%f", point_longitude)));
-
-
-            try {
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
-                HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkfixURL());
-                httpPost.setEntity(entity);
-
-                task = new phpdown();    // 쓰레드 시작
-                task.execute(httpPost);
-
-            } catch (Exception e) {
-                Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
-                Log.e("Exception Error", e.toString());
-            }
-        }
-    }
-        // 버튼 아님 수정하기 이전 기록 불러오기
-    public void tab1_fix_select()
-    {
+        StartShow();
+        phptype = "LOAD";
 
         ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
 
-        post.add(new BasicNameValuePair("talk_idx", TalkIdx));
-        post.add(new BasicNameValuePair("talk_writeid", Talkwrite_id));
+        post.add(new BasicNameValuePair("loginID", AppInfo.MY_LOGINID));
+        post.add(new BasicNameValuePair("userID", AppInfo.MY_DEVICEID));
 
 
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
-            HttpPost httpPost = new HttpPost(appInfo.Get_Tab1_AddtalkfixselectURL());
+            HttpPost httpPost = new HttpPost(appInfo.Get_Tab4_fix_profile_load());
             httpPost.setEntity(entity);
 
             task = new phpdown();    // 쓰레드 시작
@@ -301,33 +167,138 @@ public class Tab_addtalk extends Activity
         }
     }
 
-   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 사진, 갤러리 부분
-   // 갤러리 다이얼로그 설정
-   @Override
-   protected Dialog onCreateDialog(int id) {
-       switch (id) {
-           case 1:
-               final CharSequence[] item = {"카메라", "갤러리", "취소"};
-               AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-               builder.setTitle("사진 불러오기") // 제목 설정
-                       .setItems(item, new DialogInterface.OnClickListener() {
-                           public void onClick(DialogInterface dialogInterface, int i) {
-                               if (item[i].toString().equals(item[0])) {
-                                   doTakePhotoAction();
-                               } else if (item[i].toString().equals(item[1])) {
-                                   doTakeAlbumAction();
-                               } else {
-                                   dialogInterface.dismiss();
-                               }
-                           }
-                       });
 
-               AlertDialog alert = builder.create();  //알림 객체 생성
-               return alert;
-       }
-       return null;
-   }
+
+    // 사진을 클릭했을때
+    public void tab4_fix_proimg(View v)
+    {
+        showDialog(1);
+    }
+
+
+    // 프로필 수정 완료 버튼 리스너
+    public void tab4_setting_profile_submit(View v)
+    {
+        InitShow(1);
+        StartShow();
+        phptype = "FIX";
+
+        Boolean PassState = false;
+
+        String fix_nickname_ = "";
+        String fix_email_ = "";
+        String fix_pass_ = "";
+
+        // 검증 체크
+        if(!edit_nickname.getText().toString().equals(userdata.get("user_nickname").toString()))
+        {
+            fix_nickname_ = edit_nickname.getText().toString();   //수정된 닉네임
+        }
+        else
+        {
+            fix_nickname_ = userdata.get("user_nickname").toString();
+        }
+
+        if(!edit_email.getText().toString().equals(userdata.get("user_email").toString()))
+        {
+            fix_email_ = edit_email.getText().toString();
+        }
+        else
+        {
+            fix_email_ = userdata.get("user_email").toString();
+        }
+
+        if(!edit_fixpass.getText().toString().equals(userdata.get("user_pass").toString()) &&
+                !edit_fixpassre.getText().toString().equals(userdata.get("user_pass").toString())
+                && !edit_fixpass.getText().toString().equals("") && !edit_fixpass.getText().toString().equals(null)
+                && !edit_fixpassre.getText().toString().equals("") && !edit_fixpassre.getText().toString().equals(null))
+        {
+            if(edit_fixpass.getText().toString().equals(edit_fixpassre.getText().toString()))
+            {
+                fix_pass_ = edit_fixpass.getText().toString();
+                PassState =true;
+            }
+            else
+            {
+                StopShow();
+                Toast.makeText(this,"비밀번호가 다릅니다. 확인해주세요.",Toast.LENGTH_SHORT).show();
+                edit_fixpass.setText(null);
+                edit_fixpassre.setText(null);
+            }
+        }
+        else
+        {
+            PassState =true;
+            fix_pass_ = userdata.get("user_pass").toString();
+            //Toast.makeText(this,"비밀번호가 공백이거나 기존 비밀번호와 같습니다.",Toast.LENGTH_SHORT).show();
+        }
+
+
+        if(PassState)
+        {
+            ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+            post.add(new BasicNameValuePair("loginID", AppInfo.MY_LOGINID));
+            post.add(new BasicNameValuePair("userID", AppInfo.MY_DEVICEID));
+
+            post.add(new BasicNameValuePair("fix_nickname", fix_nickname_));
+            post.add(new BasicNameValuePair("fix_email", fix_email_));
+            post.add(new BasicNameValuePair("fix_pass", fix_pass_));
+
+
+            try {
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+                HttpPost httpPost = new HttpPost(appInfo.Get_Tab4_fix_profile_update());
+                httpPost.setEntity(entity);
+
+                task = new phpdown();    // 쓰레드 시작
+                task.execute(httpPost);
+
+            } catch (Exception e) {
+                Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+                Log.e("Exception Error", e.toString());
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 사진, 갤러리 부분
+    // 갤러리 다이얼로그 설정
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case 1:
+                final CharSequence[] item = {"카메라", "갤러리", "삭제", "취소"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                builder.setTitle("사진 불러오기") // 제목 설정
+                        .setItems(item, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (item[i].toString().equals(item[0])) {
+                                    doTakePhotoAction();
+                                }
+                                else if (item[i].toString().equals(item[1]))
+                                {
+                                    doTakeAlbumAction();
+                                }
+                                else if (item[i].toString().equals(item[2]))
+                                {
+                                    // 이미지 삭제
+                                }
+                                else
+                                {
+                                    dialogInterface.dismiss();
+                                }
+                            }
+                        });
+
+                AlertDialog alert = builder.create();  //알림 객체 생성
+                return alert;
+        }
+        return null;
+    }
+
+
 
     //////////////////////////////////// 사진 카메라, 앨범 //////////////////////////////////////////////
 
@@ -358,7 +329,7 @@ public class Tab_addtalk extends Activity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-       // Toast.makeText(getBaseContext(), "resultCode : " + resultCode, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getBaseContext(), "resultCode : " + resultCode, Toast.LENGTH_SHORT).show();
 
         if (resultCode != RESULT_OK) {
             return;
@@ -428,11 +399,11 @@ public class Tab_addtalk extends Activity
 
                     //write_img_select.setImageBitmap(photo);
                     Glide.with(this.getApplicationContext()).load(photo_path).centerCrop().bitmapTransform(new CropCircleTransformation(this.getApplicationContext()))
-                            .error(R.drawable.jarang_upload_img_default).into(layout_img);
+                            .error(R.drawable.jarang_upload_img_default).into(Proimg);
 
 
                     //                Log.i("TAG1,", "포토 :" + photo + "   갯 :"+ photo.getGenerationId());
-                    Toast.makeText(getBaseContext(), "퍼온 사진인지 체크중..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "잘생겼는지 체크중..", Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -445,26 +416,6 @@ public class Tab_addtalk extends Activity
 */
                 break;
             }
-
-            case MAP_SELECT:
-            {
-
-                map_state = data.getStringExtra("point_state");
-                point_latitude =  data.getDoubleExtra("point_latitude",0);
-                point_longitude = data.getDoubleExtra("point_longitude",0);
-                point_address = data.getStringExtra("point_address");
-
-                if(map_state.toString().equals("true"))
-                {
-                    Glide.with(this).load(R.drawable.jarang_upload_location_on).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
-
-                    Toast.makeText(getApplicationContext(),point_address,Toast.LENGTH_SHORT).show();
-                }
-
-
-                break;
-            }
-
         }
     }
 
@@ -550,10 +501,7 @@ public class Tab_addtalk extends Activity
     }
 
 
-
-    //////////////////////////////////////////////////////////////////////////////////////////// 토크 업로드
-
-
+/////////////////////////////////////////////////////////////////////////////// 통신 부분 ////////////////////////////////////////////////////////////////////////
     private class phpdown extends AsyncTask<HttpPost, Integer, String> {
 
         @Override
@@ -675,65 +623,18 @@ public class Tab_addtalk extends Activity
         protected void onPostExecute(String result) {
             //loading.dismiss();
             Log.i("result",result);
-            if(WriteType.toString().equals("ADD"))
+
+            if(phptype.toString().equals("LOAD"))
             {
-                if (!result.toString().equals("CHARNULL"))
-                {
-                    if (imgbyte != null)
-                    {
-                        Talk_idx = result;
-                        upload = new AndroidUploader();
-                        upload.execute();
-                    }
-                    else
-                    {
-                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
-
-                        ((Main) Main.MinContext).tab1_.Remove_list();
-                        ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
-
-                        finish();
-                    }
-
-                } else {
-                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-            }
-            else if(WriteType.toString().equals("FIXUPDATE"))
-            {
-                if (!result.toString().equals("CHARNULL"))
-                {
-                    if (imgbyte != null)
-                    {
-                        Talk_idx = TalkIdx;
-                        upload = new AndroidUploader();
-                        upload.execute();
-                    }
-                    else
-                    {
-                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
-
-                        ((Main) Main.MinContext).tab1_.Remove_list();
-                        ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
-
-                        finish();
-                    }
-
-                } else {
-                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
-                }
-            }
-            else if(WriteType.toString().equals("FIX"))
-            {
-                String idx_;
-                String talk_idx_;
-                String talk_writeid_;
-                String talk_img_;
-                String talk_data_;
-                String talk_locationstate_;
-                String talk_latitude_;
-                String talk_longitude_;
-                String talk_writetime_;
+                String index_;
+                String user_push_;
+                String user_pass_;
+                String user_device_;
+                String user_nickname_;
+                String user_email_;
+                String user_state_;
+                String user_profileimg_;
+                String user_logindata_;
 
 
                 try {
@@ -744,25 +645,25 @@ public class Tab_addtalk extends Activity
                     for (int i = 0; i < ja.length(); i++) {
 
                         JSONObject jo = ja.getJSONObject(i);
-                        idx_ = jo.getString("idx");
-                        talk_idx_ = jo.getString("talk_idx");
-                        talk_writeid_ = jo.getString("talk_writeid");
-                        talk_img_ = jo.getString("talk_img");
-                        talk_data_ = jo.getString("talk_data");
-                        talk_locationstate_ = jo.getString("talk_locationstate");
-                        talk_latitude_ = jo.getString("talk_latitude");
-                        talk_longitude_ = jo.getString("talk_longitude");
-                        talk_writetime_ = jo.getString("talk_writetime");
+                        index_ = jo.getString("index");
+                        user_push_ = jo.getString("user_push");
+                        user_pass_ = jo.getString("user_pass");
+                        user_device_ = jo.getString("user_device");
+                        user_nickname_ = jo.getString("user_nickname");
+                        user_email_ = jo.getString("user_email");
+                        user_state_ = jo.getString("user_state");
+                        user_profileimg_ = jo.getString("user_profileimg");
+                        user_logindata_ = jo.getString("user_logindata");
 
-                        fixdata.put("idx",idx_);
-                        fixdata.put("talk_idx",talk_idx_);
-                        fixdata.put("talk_writeid",talk_writeid_);
-                        fixdata.put("talk_img",talk_img_);
-                        fixdata.put("talk_data",talk_data_);
-                        fixdata.put("talk_locationstate",talk_locationstate_);
-                        fixdata.put("talk_latitude",talk_latitude_);
-                        fixdata.put("talk_longitude",talk_longitude_);
-                        fixdata.put("talk_writetime",talk_writetime_);
+                        userdata.put("index",index_);
+                        userdata.put("user_push",user_push_);
+                        userdata.put("user_pass",user_pass_);
+                        userdata.put("user_device",user_device_);
+                        userdata.put("user_nickname",user_nickname_);
+                        userdata.put("user_email",user_email_);
+                        userdata.put("user_state",user_state_);
+                        userdata.put("user_profileimg",user_profileimg_);
+                        userdata.put("user_logindata",user_logindata_);
 
                     }
 
@@ -773,50 +674,56 @@ public class Tab_addtalk extends Activity
                 }
 
                 // UI 적용 함수 시작
-                Fix_UiUpdate();
+                Load_UiUpdate();
+            }
+            else if(phptype.toString().equals("FIX"))
+            {
+                if(result.toString().equals("SUCCESS"))
+                {
+                    if (imgbyte != null)
+                    {
+                        upload = new AndroidUploader();
+                        upload.execute();
+                    }
+                    else
+                    {
+                        Toast.makeText(getBaseContext(), "프로필이 변경 되었습니다.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+                else if(result.toString().equals("CHARNULL"))
+                {
+                    Toast.makeText(getBaseContext(), "특수문자 및 공백이 존재합니다.", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getBaseContext(), "인터넷 환경이 불안정합니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  수정하기 불러온거 UI 적용
+/////////////////////////////////////////////////////////////////////////////// 통신 부분 끝 (END) ////////////////////////////////////////////////////////////////////////
 
-    public void Fix_UiUpdate()
+    // 기존 프로필 정보 UI 적용
+    public void Load_UiUpdate()
     {
 
-        // 이미지 부분
-        if(!fixdata.get("talk_img").toString().equals("none"))
+        // 프로필 이미지 부분
+        if(!userdata.get("user_profileimg").toString().equals("none"))
         {
-           // Glide.with(this).load(R.drawable.jarang_upload_location_off).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
-            Glide.with(this).load(appInfo.Get_Tab1_TalkImgFTP_URL()+fixdata.get("talk_img")).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_img);
+            Glide.with(this).load(appInfo.Get_Tab4_ProImgFTP_URL()+userdata.get("user_profileimg")).centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(this)).into(Proimg);
         }
         else
         {
-            Glide.with(this).load(R.drawable.jarang_upload_img_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_img);
+            Glide.with(this).load(R.drawable.profile_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(Proimg);
         }
 
-        // 위치 부분
-        if(!fixdata.get("talk_locationstate").equals("none"))
-        {
-            Glide.with(this).load(R.drawable.jarang_upload_location_on).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
+        // 닉네임 부분
+        edit_nickname.setText(userdata.get("user_nickname").toString());
 
-            map_state = "true";
-
-            point_latitude = Double.parseDouble(fixdata.get("talk_latitude").toString());
-            point_longitude = Double.parseDouble(fixdata.get("talk_longitude").toString());
-
-        }
-        else
-        {
-            Glide.with(this).load(R.drawable.jarang_upload_location_off).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(layout_location);
-        }
-
-        // 내용 부분
-
-        if(!fixdata.get("talk_data").equals(null))
-        {
-            edit_data.setText(fixdata.get("talk_data").toString());
-        }
-
-
+        // 이메일 부분
+        edit_email.setText(userdata.get("user_email").toString());
+        StopShow();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 이미지 업로드 부분
@@ -853,7 +760,7 @@ public class Tab_addtalk extends Activity
         Log.d("ProfileTest", "file path = " + filePath);
 //        HttpFileUpload(MyApplication.GetServerDomain() + "/php/upload_profile_image.php?&device_id=" + ((MainActivity) MainActivity.mContext).myApp.myInfo.getDevice_id()
 //                + "&secret_key=" + MyApplication.secretKey, "", filePath);
-        HttpFileUpload(appInfo.Get_Tab1_AddtalkimguploadURL(), "", filePath);
+        HttpFileUpload(appInfo.Get_Tab4_fix_profile_imgupdate(), "", filePath);
     }
 
     // 이미지 업로드
@@ -888,25 +795,18 @@ public class Tab_addtalk extends Activity
 
             Log.d("ProfileTest", "Enter HttpFileUpload 3-1");
 
-            //토크 타입 올리기 (ADD, FIX)
+            //텍스트 올리기 (loginID)
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
-            dos.writeBytes("Content-Disposition: form-data; name=\"talktype\"" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"loginID\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(Talk_type);  // 토크 식별 아이디
+            dos.writeBytes(AppInfo.MY_LOGINID);  // 로그인 아이디
             dos.writeBytes(lineEnd);
 
-            //텍스트 올리기 (talkidx)
+            //텍스트 올리기 (userID)
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
-            dos.writeBytes("Content-Disposition: form-data; name=\"talkidx\"" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"userID\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(Talk_idx);  // 토크 식별 아이디
-            dos.writeBytes(lineEnd);
-
-            //텍스트 올리기 (talkwriteid)
-            dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
-            dos.writeBytes("Content-Disposition: form-data; name=\"talkwriteid\"" + lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(Talkwrite_id);  // 작성자 아이디
+            dos.writeBytes(AppInfo.MY_DEVICEID);  // 디바이스 아이디
             dos.writeBytes(lineEnd);
 
 
@@ -974,17 +874,13 @@ public class Tab_addtalk extends Activity
         public void handleMessage(Message msg){
             if(msg.what==0)
             {
-                if(WriteType.toString().equals("ADD"))
+                 if(phptype.toString().equals("FIX"))
                 {
-                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
-                }
-                else if(WriteType.toString().equals("FIX"))
-                {
-                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
+                    StopShow();
+                    Toast.makeText(getApplicationContext(), "프로필이 변경 되었습니다.", Toast.LENGTH_SHORT).show();
                 }
                 ((Main) Main.MinContext).tab1_.Remove_list();
                 ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
-
                 finish();  // 창 종료
                 Log.d("ChangeMyInfo", "CloseActivity");
             }
@@ -1000,6 +896,7 @@ public class Tab_addtalk extends Activity
         }
     };
 
+
     // 뒤로가기 설정  (저장 이미지 삭제)
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -1009,8 +906,8 @@ public class Tab_addtalk extends Activity
             case KeyEvent.KEYCODE_BACK:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setTitle("자랑질 종료") // 제목 설정
-                        .setMessage("작성중인 글을 종료합니다.")  // 중앙 메세시 설정
+                builder.setTitle("프로필 설정 종료") // 제목 설정
+                        .setMessage("프로필 변경을 종료합니다.")  // 중앙 메세시 설정
                         .setCancelable(false)  //뒤로 버튼 클릭시 취소 설정
                         .setPositiveButton("예", new DialogInterface.OnClickListener() {
                             // 예 버튼 클릭시 설정
@@ -1034,11 +931,19 @@ public class Tab_addtalk extends Activity
         return super.onKeyDown(keyCode, event);
     }
 
+
     // 프로그레스 설정
-    public void InitShow()
+    public void InitShow(int value)
     {
-        loading.setProgress(ProgressDialog.STYLE_SPINNER);
-        loading.setMessage("잠시만 기다려 주세요..");
+        if(value == 1)
+        {
+            loading.setProgress(ProgressDialog.STYLE_SPINNER);
+            loading.setMessage("프로필을 업로드 중입니다.");
+        }
+        else if(value == 2) {
+            loading.setProgress(ProgressDialog.STYLE_SPINNER);
+            loading.setMessage("정보를 불러오는 중입니다..");
+        }
     }
     public void SetmsgShow(String value)
     {
@@ -1046,4 +951,5 @@ public class Tab_addtalk extends Activity
     }
     public void StartShow() {loading.show();}
     public void StopShow() {loading.dismiss();}
+
 }

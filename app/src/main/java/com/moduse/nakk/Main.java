@@ -152,7 +152,9 @@ public class Main extends Activity
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
-        add_Linear.addView(tab4_.in_layout);
+
+        layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        add_Linear.addView(tab4_.in_layout,layoutParams);
 
         tab4_.init_tab4();
     }
@@ -264,12 +266,48 @@ public class Main extends Activity
 
 
 
-    // 탭 3 부분
+///////////////// 탭 3 부분 //////////////////////
 
     public void YoutubePlay(String value)
     {
         Intent intent = new Intent(Main.MinContext, YoutubeActivity.class);
         intent.putExtra("movurl",value);
+        startActivity(intent);
+    }
+
+
+    ///////////////// 탭 4  부분 //////////////////////  설정
+
+    // 프로필 설정 부분
+    public void tab4_setting_fixprofile(View v)
+    {
+        Intent intent = new Intent(MinContext,Tab4_fixprofile.class);
+
+        startActivity(intent);
+
+    }
+
+    // 기본설정 부분
+    public void tab4_setting_fixbase(View v)
+    {
+        Intent intent = new Intent(MinContext,Tab4_fixbase.class);
+
+        startActivity(intent);
+    }
+
+    // 후원하기 부분
+    public void tab4_setting_fixsponsor(View v)
+    {
+        Intent intent = new Intent(MinContext,Tab4_sponsor.class);
+
+        startActivity(intent);
+    }
+
+    // 후원자 기록 부분
+    public void tab4_setting_fixsponsorlist(View v)
+    {
+        Intent intent = new Intent(MinContext,Tab4_sponsorlist.class);
+
         startActivity(intent);
     }
 

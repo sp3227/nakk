@@ -1,22 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#262626">
+    android:background="@drawable/background">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/background">
+        android:layout_height="45dp"
+        android:background="#191919">
 
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="7dp"
-            android:background="#6a6969">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="기본 설정"
+            android:textColor="#00fef6"
+            android:textSize="20dp"
+            android:textStyle="bold|italic" />
 
-        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="7dp"
+        android:background="#6a6969">
+
+    </LinearLayout>
 
     <LinearLayout
         android:onClick="tab4_setting_fixprofile"
@@ -27,34 +35,38 @@
         android:background="#3a3a3a">
 
         <ImageView
-            android:layout_width="15dp"
+            android:layout_width="22dp"
             android:layout_height="match_parent"
-            android:src="@drawable/icon_sp_withe"/>
+            android:src="@drawable/icon_tab4"/>
 
         <TextView
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="7dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="프로필 설정 "
+            android:text="푸시 알림 받기 "
             android:textSize="20dp"
             android:textStyle="bold|italic"
             android:gravity="center|left"
             android:textColor="#FFFFFF"/>
 
-        <TextView
-            android:layout_marginLeft="3dp"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="(사진, 비밀번호, 기본정보)"
-            android:textSize="15dp"
-            android:textStyle="bold|italic"
-            android:gravity="center|left"/>
+            android:layout_height="match_parent">
+
+        <CheckBox
+            android:id="@+id/tab4_fixbase_push"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:checked="true"
+            android:layout_height="match_parent" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:onClick="tab4_setting_fixbase"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
+        android:onClick="tab4_fixbase_signout"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="85dp"
@@ -62,15 +74,15 @@
         android:background="#3a3a3a">
 
         <ImageView
-            android:layout_width="15dp"
+            android:layout_width="22dp"
             android:layout_height="match_parent"
-            android:src="@drawable/icon_sp_withe"/>
+            android:src="@drawable/icon_tab4"/>
 
         <TextView
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="7dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="기본 설정 "
+            android:text="회원 탈퇴하기 "
             android:textSize="20dp"
             android:textStyle="bold|italic"
             android:gravity="center|left"
@@ -80,16 +92,17 @@
             android:layout_marginLeft="3dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="(알림, 회원탈퇴)"
+            android:text="(모든 데이터가 삭제 됩니다.)"
             android:textSize="15dp"
             android:textStyle="bold|italic"
             android:gravity="center|left"/>
 
+
     </LinearLayout>
 
     <LinearLayout
-        android:onClick="tab4_setting_fixsponsor"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
+        android:onClick="tab4_fixbase_agee1"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="85dp"
@@ -97,34 +110,27 @@
         android:background="#3a3a3a">
 
         <ImageView
-            android:layout_width="15dp"
+            android:layout_width="22dp"
             android:layout_height="match_parent"
-            android:src="@drawable/icon_sp_withe"/>
+            android:src="@drawable/icon_tab4"/>
 
         <TextView
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="7dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="후원 하기 "
+            android:text="낚중일기 이용약관 "
             android:textSize="20dp"
             android:textStyle="bold|italic"
             android:gravity="center|left"
             android:textColor="#FFFFFF"/>
 
-        <TextView
-            android:layout_marginLeft="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="(낚중일기 후원하기)"
-            android:textSize="15dp"
-            android:textStyle="bold|italic"
-            android:gravity="center|left"/>
+
 
     </LinearLayout>
 
     <LinearLayout
-        android:onClick="tab4_setting_fixsponsorlist"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
+        android:onClick="tab4_fixbase_agee2"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="85dp"
@@ -132,30 +138,21 @@
         android:background="#3a3a3a">
 
         <ImageView
-            android:layout_width="15dp"
+            android:layout_width="22dp"
             android:layout_height="match_parent"
-            android:src="@drawable/icon_sp_withe"/>
+            android:src="@drawable/icon_tab4"/>
 
         <TextView
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="7dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="후원 명예기록 "
+            android:text="낚중일기 위치정보 이용약관 "
             android:textSize="20dp"
             android:textStyle="bold|italic"
             android:gravity="center|left"
             android:textColor="#FFFFFF"/>
 
-        <TextView
-            android:layout_marginLeft="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="(후원 회원님들 기록)"
-            android:textSize="15dp"
-            android:textStyle="bold|italic"
-            android:gravity="center|left"/>
 
-    </LinearLayout>
 
     </LinearLayout>
 

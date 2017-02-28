@@ -89,6 +89,7 @@ public class Tab1_read extends Activity
 
         in_layout = (LinearLayout) Inflater.inflate(R.layout.tab1, null);
 
+
     }
 
     public void init_tab1()    //  기본글 불러오기  (전체)
@@ -524,6 +525,7 @@ public class Tab1_read extends Activity
                         Toast.makeText(Main.MinContext,"서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.",Toast.LENGTH_SHORT).show();
                     }
 
+                    Remove_list();
                     if(talk_type.equals("ALL"))
                     {
                         all_tab1();
@@ -594,8 +596,7 @@ public class Tab1_read extends Activity
             // final View view;
             final TalkData data = items.get(position);
             final int index = position;
-            AppInfo.SaveIndexNum = position;
-
+            AppInfo.SaveIndexNum = list.getFirstVisiblePosition();
 
             if(convertView == null)
             {

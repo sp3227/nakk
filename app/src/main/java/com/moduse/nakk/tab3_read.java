@@ -343,7 +343,7 @@ public class Tab3_read extends Activity {
                 holder.View_title.setText(data.GET_title());
 
                 // 이미지
-                Glide.with(convertView.getContext()).load(data.GET_imgurl()).diskCacheStrategy(DiskCacheStrategy.NONE).crossFade().thumbnail(0.5f).into(holder.View_img);
+                Glide.with(convertView.getContext()).load(data.GET_imgurl()).diskCacheStrategy(DiskCacheStrategy.RESULT).crossFade().thumbnail(0.5f).into(holder.View_img);
                 // 영상 클릭 리스너
                 holder.View_img.setOnClickListener(new ImageView.OnClickListener()
                 {

@@ -106,12 +106,40 @@ public class Login extends AppCompatActivity {
         setting = getSharedPreferences("setting", 0);  // 자동 로그인 부분 설정
         editor= setting.edit();
 
+        // 로그인 부분 불러오기 (로컬)
         if(setting.getBoolean("Auto_Login_enabled",false))
         {
             user_id.setText(setting.getString("ID", ""));
             user_pass.setText(setting.getString("PW", ""));
             loginsave.setChecked(true);
         }
+
+        // 로그인 부분 불러오기 (로컬)
+        if(setting.getBoolean("PUSH_STATE",false))
+        {
+            AppInfo.Push_state = false;
+        }
+        else
+        {
+            AppInfo.Push_state = true;
+        }
+
+        user_id.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                user_id.setText(null);
+            }
+        });
+
+        user_pass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                user_pass.setText(null);
+            }
+        });
+
         gcm = GoogleCloudMessaging.getInstance(this);
         Pushtoken();
 
@@ -133,7 +161,7 @@ public class Login extends AppCompatActivity {
 
         if(loginsave.isChecked())
         {
-            setting = getSharedPreferences("logininit",0);
+            setting = getSharedPreferences("setting",0);
 
             editor.putString("ID", id);
             editor.putString("PW", pass);
@@ -222,6 +250,7 @@ public class Login extends AppCompatActivity {
 
                 if (result.toString().equals("SUCCESS"))
                 {
+                    AppInfo.MY_LOGINID = user_id.getText().toString();
                     Intent intent = new Intent(Login.this, Main.class);
                     startActivity(intent);
                     finish();

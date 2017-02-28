@@ -66,6 +66,22 @@ public class AppInfo extends Application
     //탭3 유튜브
     private String Tab3_YoutubeURL = UNITY_URL+"youtubelist.php";
 
+    //탭4 프로필 (기존 프로필 불러오기)
+    private String Tab4_fix_profile_load = UNITY_URL+"Profile_fix_select.php";
+
+    //탭4 프로필 (프로필 수정하기)
+    private String Tab4_fix_profile_update = UNITY_URL+"Profile_fix.php";
+
+    //탭4 프로필 (프로필 이미지 업로드)
+    private String Tab4_fix_profile_imgupdate = UNITY_URL+"Profile_fix_img.php";
+
+    //탭4 프로필 (기존 이미지 삭제 이미지만!)
+    private String Tab4_fix_profile_imgdelete = UNITY_URL+"Profile_fix_imgdelete.php";
+
+    //탭1 이미지 저장 경로 URL
+    private String Tab4_ProImgFTP_URL = "http://nakk20.raonnet.com/profileimg/";
+
+
     //유튜브 키
     private String YoutubeKey = "AIzaSyB6yor1mxzmpr3wga7c2MsNg_A9K2YYFJs";
 
@@ -75,6 +91,12 @@ public class AppInfo extends Application
     // 내 위치 정보
     private double Latitude;    // 경도
     private double Longitude;   // 위도
+
+    // 내 푸시 상태 (ON/OFF)
+    public static boolean Push_state = true;
+
+    // MY 로그인 아이디
+    public static String MY_LOGINID;
 
 
     //디바이스 아이디 체크
@@ -122,6 +144,12 @@ public class AppInfo extends Application
 
     public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}
     public String Get_Tab3_YoutubeKey(){return YoutubeKey;}
+
+    public String Get_Tab4_fix_profile_load(){return Tab4_fix_profile_load;}
+    public String Get_Tab4_fix_profile_update(){return Tab4_fix_profile_update;}
+    public String Get_Tab4_fix_profile_imgupdate(){return Tab4_fix_profile_imgupdate;}
+    public String Get_Tab4_fix_profile_imgdelete(){return Tab4_fix_profile_imgdelete;}
+    public String Get_Tab4_ProImgFTP_URL(){return Tab4_ProImgFTP_URL;}
 
 
 

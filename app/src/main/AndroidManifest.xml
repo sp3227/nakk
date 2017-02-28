@@ -52,6 +52,10 @@
         <activity android:name=".Tab1_ment"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".YoutubeActivity"/>
+        <activity android:name=".Tab4_fixprofile"/>
+        <activity android:name=".Tab4_fixbase"/>
+        <activity android:name=".Tab4_sponsor"/>
+        <activity android:name=".Tab4_sponsorlist"/>
 
         <!-- [START gcm_receiver] -->
         <receiver

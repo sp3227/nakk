@@ -47,7 +47,7 @@
                 android:id="@+id/tab1_add_img_location"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/jarang_upload_location_off"/>
+                />
 
         </LinearLayout>
 
@@ -66,7 +66,7 @@
                 android:id="@+id/tab1_add_img"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/jarang_upload_img_default"/>
+               />
 
         </LinearLayout>
 
