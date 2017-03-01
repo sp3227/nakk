@@ -687,7 +687,7 @@ public class Tab_addtalk extends Activity
                     }
                     else
                     {
-                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
 
                         ((Main) Main.MinContext).tab1_.Remove_list();
                         ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
@@ -696,7 +696,7 @@ public class Tab_addtalk extends Activity
                     }
 
                 } else {
-                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
             }
             else if(WriteType.toString().equals("FIXUPDATE"))
@@ -711,7 +711,7 @@ public class Tab_addtalk extends Activity
                     }
                     else
                     {
-                        Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
 
                         ((Main) Main.MinContext).tab1_.Remove_list();
                         ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
@@ -720,7 +720,7 @@ public class Tab_addtalk extends Activity
                     }
 
                 } else {
-                    Toast.makeText((Main) Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main.MinContext, "특수문자는 사용할수 없습니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
             }
             else if(WriteType.toString().equals("FIX"))
@@ -976,12 +976,22 @@ public class Tab_addtalk extends Activity
             {
                 if(WriteType.toString().equals("ADD"))
                 {
-                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main.MinContext, "당신의 자랑질이 등록 되었습니다.", Toast.LENGTH_SHORT).show();
                 }
                 else if(WriteType.toString().equals("FIX"))
                 {
-                    Toast.makeText((Main) Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main.MinContext, "당신의 자랑질이 수정 되었습니다.", Toast.LENGTH_SHORT).show();
                 }
+
+                if (mImageCaptureUri != null) {
+                    // 임시 파일 삭제
+                    File f = new File(mImageCaptureUri.getPath());
+                    if (f.exists()) {
+                        f.delete();
+
+                    }
+                }
+
                 ((Main) Main.MinContext).tab1_.Remove_list();
                 ((Main) Main.MinContext).tab1_.all_tab1();  // (토크리스트)리스트뷰 초기화
 

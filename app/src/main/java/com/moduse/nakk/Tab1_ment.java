@@ -570,7 +570,7 @@ public class Tab1_ment  extends Activity
                 }
 
                 // 닉네임 부분
-                holder.View_nickname.setText(data.GET_menter_nickname());
+                holder.View_nickname.setText(data.GET_menter_nickname()+" ");
 
                 // 작성날짜 부분
                 holder.View_date.setText(data.GET_ment_addtime());

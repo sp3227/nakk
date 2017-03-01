@@ -600,7 +600,7 @@ public class Tab1_read extends Activity
 
             if(convertView == null)
             {
-                convertView = m_inflager.inflate(R.layout.item_tab1, null);
+                convertView = m_inflager.inflate(R.layout.item_tab1, parent,false);
 
                 holder = new ViewHolder();
 
