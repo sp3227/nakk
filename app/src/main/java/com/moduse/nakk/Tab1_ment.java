@@ -395,6 +395,7 @@ public class Tab1_ment  extends Activity
 
                     String ment_addtime;
                     String ment_data;
+                    String user_sponsor;
 
                     if(str.toString().equals("CHARFALSE"))
                     {
@@ -419,8 +420,9 @@ public class Tab1_ment  extends Activity
                                 menter_img = jo.getString("menter_img");
                                 ment_addtime = jo.getString("ment_addtime");
                                 ment_data = jo.getString("ment_data");
+                                user_sponsor  = jo.getString("user_sponsor");
 
-                                listItem.add(new MentData(idx, talk_idx, talk_writeid, menter_id, menter_nickname, menter_img, ment_addtime, ment_data));
+                                listItem.add(new MentData(idx, talk_idx, talk_writeid, menter_id, menter_nickname, menter_img, ment_addtime, ment_data, user_sponsor));
                             }
                             customAdapter = new CustomAdapter(getApplicationContext(), R.id.list_item, listItem);
                             list.setAdapter(customAdapter);
@@ -525,6 +527,7 @@ public class Tab1_ment  extends Activity
                 //  view 에서 얻어 초기화
                 holder.View_img = (ImageView) convertView.findViewById(R.id.tab1_ment_proimg);
                 holder.View_nickname = (TextView) convertView.findViewById(R.id.tab1_ment_nickname);
+                holder.View_user_sponsor = (ImageView) convertView.findViewById(R.id.tab1_ment_sponsor);
                 holder.View_date = (TextView) convertView.findViewById(R.id.tab1_ment_date);
                 holder.View_data = (TextView) convertView.findViewById(R.id.tab1_ment_data);
                 holder.View_btn_delete = (LinearLayout) convertView.findViewById(R.id.tab1_ment_btn_delete);
@@ -571,6 +574,16 @@ public class Tab1_ment  extends Activity
 
                 // 닉네임 부분
                 holder.View_nickname.setText(data.GET_menter_nickname()+" ");
+
+                // 스폰서 부분
+                if(data.GET_user_sponsor().toString().equals("true"))
+                {
+                    holder.View_user_sponsor.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    holder.View_user_sponsor.setVisibility(View.GONE);
+                }
 
                 // 작성날짜 부분
                 holder.View_date.setText(data.GET_ment_addtime());
@@ -621,6 +634,7 @@ public class Tab1_ment  extends Activity
         {
             ImageView       View_img;
             TextView        View_nickname;
+            ImageView        View_user_sponsor;
             TextView        View_date;
             TextView        View_data;
             LinearLayout    View_btn_delete;

@@ -36,10 +36,13 @@
     </LinearLayout>
 
     <ListView
+        android:layout_marginTop="5dp"
         android:id="@+id/tab4_sponsor_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="20dp">
+        android:dividerHeight="10dp"
+        android:divider="@android:color/transparent"
+        android:background="@android:color/transparent">
 
 
     </ListView>

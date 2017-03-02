@@ -11,16 +11,18 @@ public class SponsorData
     private String deviceID;
     private String user_nickname;
     private String money;
+    private String recipe;
     private String token;
     private String sponsortime;
 
-    public SponsorData(String idx_, String loginID_, String deviceID_, String user_nickname_, String money_, String token_, String sponsortime_)
+    public SponsorData(String idx_, String loginID_, String deviceID_, String user_nickname_, String money_, String recipe_, String token_, String sponsortime_)
     {
         idx=idx_;
         loginID=loginID_;
         deviceID=deviceID_;
         user_nickname=user_nickname_;
         money=money_;
+        recipe=recipe_;
         token=token_;
         sponsortime=sponsortime_;
     }
@@ -31,6 +33,7 @@ public class SponsorData
     public String GET_deviceID(){return deviceID;}
     public String GET_user_nickname(){return user_nickname;}
     public String GET_money(){return money;}
+    public String GET_recipe(){return recipe;}
     public String GET_token(){return token;}
     public String GET_sponsortime(){return sponsortime;}
 
@@ -40,6 +43,7 @@ public class SponsorData
     public void SET_deviceID(String value){deviceID = value;}
     public void SET_user_nickname(String value){user_nickname = value;}
     public void SET_money(String value){money = value;}
+    public void SET_recipe(String value){recipe = value;}
     public void SET_token(String value){token = value;}
     public void SET_sponsortime(String value){sponsortime = value;}
 }

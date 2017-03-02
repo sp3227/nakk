@@ -21,6 +21,9 @@
     <!-- 테스크 권한 -->
     <uses-permission android:name="android.permission.GET_TASKS" />​
 
+    <!-- 결제 권한 -->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <!-- Out of Memory 메모리 할당 높이기 android:largeHeap="true" -->
     <application
         android:allowBackup="true"

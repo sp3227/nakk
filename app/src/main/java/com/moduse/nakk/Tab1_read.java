@@ -413,6 +413,7 @@ public class Tab1_read extends Activity
                     String user_id;
                     String user_nickname;
                     String user_profile;
+                    String user_sponsor;
 
                     try {
                         JSONObject root = new JSONObject(str);
@@ -437,8 +438,9 @@ public class Tab1_read extends Activity
                             user_id = jo.getString("user_id");
                             user_nickname = jo.getString("user_nickname");
                             user_profile = jo.getString("user_profile");
+                            user_sponsor = jo.getString("user_sponsor");
 
-                            listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
+                            listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile, user_sponsor));
                         }
 
 
@@ -476,6 +478,7 @@ public class Tab1_read extends Activity
                     String user_id;
                     String user_nickname;
                     String user_profile;
+                    String user_sponsor;
 
                     try {
                         JSONObject root = new JSONObject(str);
@@ -500,8 +503,9 @@ public class Tab1_read extends Activity
                             user_id = jo.getString("user_id");
                             user_nickname = jo.getString("user_nickname");
                             user_profile = jo.getString("user_profile");
+                            user_sponsor = jo.getString("user_sponsor");
 
-                            listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile));
+                            listItem.add(new TalkData(idx, talk_idx, talk_writeid, talk_img, talk_data, talk_likecount, talk_mentcount, talk_locationstate, talk_latitude, talk_longitude, talk_writetime, user_id, user_nickname, user_profile, user_sponsor));
                         }
 
                     } catch (JSONException e) {
@@ -617,6 +621,7 @@ public class Tab1_read extends Activity
 
                 holder.View_user_nickname = (TextView) convertView.findViewById(R.id.tab1_item_nickname);
                 holder.View_user_profile = (ImageView) convertView.findViewById(R.id.tab1_item_prfileimg);
+                holder.View_user_sponsor = (ImageView) convertView.findViewById(R.id.tab1_talk_sponsor);
                 holder.View_delete = (LinearLayout) convertView.findViewById(R.id.tab1_item_delete);
                 holder.View_fix = (LinearLayout) convertView.findViewById(R.id.tab1_item_fix);
 
@@ -763,7 +768,18 @@ public class Tab1_read extends Activity
                 // 자랑하기 작성시간 부분
                 holder.View_writetime.setText(data.GET_talk_writetime());
                 // 자랑하기 작성자 닉네임 부분
-                holder.View_user_nickname.setText(data.GET_user_nickname());
+                holder.View_user_nickname.setText(data.GET_user_nickname()+" ");
+
+                // 스폰서 부분
+                if(data.GET_user_sponsor().toString().equals("true"))
+                {
+                    holder.View_user_sponsor.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    holder.View_user_sponsor.setVisibility(View.GONE);
+                }
+
                 // 자랑하기 작성자 프로필 사진 부분(클릭이벤트 필요)
 
                 if(data.GET_user_profile().equals("none"))
@@ -867,6 +883,7 @@ public class Tab1_read extends Activity
 
             TextView View_user_nickname;
             ImageView View_user_profile;
+            ImageView View_user_sponsor;
 
         }
     }

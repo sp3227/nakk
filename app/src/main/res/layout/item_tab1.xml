@@ -31,14 +31,33 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tab1_item_nickname"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="닉네임"
+                    android:gravity="center|left"
+                    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tab1_item_nickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="닉네임 "
+                    android:gravity="center|left"
                     android:textColor="#000000"
-                    android:textStyle="bold|italic"
-                    android:textSize="17dp"/>
+                    android:textSize="17dp"
+                    android:textStyle="bold|italic" />
+
+                    <ImageView
+                        android:visibility="visible"
+                        android:id="@+id/tab1_talk_sponsor"
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:layout_gravity="center|left"
+                        android:src="@drawable/icon_vip" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/tab1_item_date"
@@ -57,7 +76,7 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:gravity="bottom|right">

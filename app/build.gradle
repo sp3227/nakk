@@ -14,11 +14,22 @@ android {
 
     }
     buildTypes {
+        debug{
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
 }
 
 dependencies {
@@ -29,8 +40,11 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
     compile 'com.commit451:PhotoView:1.2.4'
-    compile 'com.google.android.gms:play-services:7.5.+'
-     testCompile 'junit:junit:4.12'
+    compile ('com.google.android.gms:play-services:7.5.+')
+            {
+                exclude module:"play-services-wallet"
+                testCompile 'junit:junit:4.12'
+            }
     compile files('libs/libDaumMapAndroid.jar')
     compile files('libs/YouTubeAndroidPlayerApi.jar')
 

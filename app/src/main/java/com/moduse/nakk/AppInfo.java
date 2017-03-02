@@ -78,6 +78,12 @@ public class AppInfo extends Application
     //탭4 프로필 (기존 이미지 삭제 이미지만!)
     private String Tab4_fix_profile_imgdelete = UNITY_URL+"Profile_fix_imgdelete.php";
 
+    //탭4 스폰서 결제
+    private String Tab4_sponsor_pay = UNITY_URL+"Sponsor_pay.php";
+
+    //탭4 스폰서 리스트 불러오기
+    private String Tab4_sponsorlist_select = UNITY_URL+"Sponsor_select.php";
+
     //탭1 이미지 저장 경로 URL
     private String Tab4_ProImgFTP_URL = "http://nakk20.raonnet.com/profileimg/";
 
@@ -150,6 +156,8 @@ public class AppInfo extends Application
     public String Get_Tab4_fix_profile_imgupdate(){return Tab4_fix_profile_imgupdate;}
     public String Get_Tab4_fix_profile_imgdelete(){return Tab4_fix_profile_imgdelete;}
     public String Get_Tab4_ProImgFTP_URL(){return Tab4_ProImgFTP_URL;}
+    public String Get_Tab4_sponsor_pay(){return Tab4_sponsor_pay;}
+    public String Get_Tab4_sponsorlist_select(){return Tab4_sponsorlist_select;}
 
 
 

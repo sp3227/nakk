@@ -24,9 +24,10 @@ public class TalkData
     private String user_id;
     private String user_nickname;
     private String user_profile;
+    private String user_sponsor;
 
     public TalkData(String idx_, String talk_idx_, String writeid_, String img_, String data_, String likecount_, String mentcount_,
-                    String locationstate_, String latitude_, String longitude_, String writetime_, String user_id_, String user_nickname_, String user_profile_)
+                    String locationstate_, String latitude_, String longitude_, String writetime_, String user_id_, String user_nickname_, String user_profile_, String user_sponsor_)
     {
         idx = idx_;
         talk_idx = talk_idx_;
@@ -43,6 +44,7 @@ public class TalkData
         user_id = user_id_;
         user_nickname = user_nickname_;
         user_profile = user_profile_;
+        user_sponsor = user_sponsor_;
 
     }
 
@@ -71,6 +73,7 @@ public class TalkData
             return proURL + user_profile;
         }
     }
+    public String GET_user_sponsor(){ return user_sponsor; }
 
 
     //SET
@@ -89,4 +92,5 @@ public class TalkData
     public void SET_user_id(String value){ user_id = value; }
     public void SET_user_nickname(String value){ user_nickname = value; }
     public void SET_user_profile(String value){ user_profile = value; }
+    public void SET_user_sponsor(String value){ user_sponsor = value; }
 }

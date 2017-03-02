@@ -16,8 +16,9 @@ public class MentData
     private String menter_img;              //작성자 프로필URL
     private String ment_addtime;            //멘트작성 시간
     private String ment_data;                //멘트 내용
+    private String user_sponsor;                //스폰서 인지 확인
 
-    public MentData(String idx_, String talk_idx_, String talk_writeid_, String menter_id_, String menter_nickname_, String menter_img_, String ment_addtime_, String ment_data_)
+    public MentData(String idx_, String talk_idx_, String talk_writeid_, String menter_id_, String menter_nickname_, String menter_img_, String ment_addtime_, String ment_data_, String user_sponsor_)
     {
         idx = idx_;
         talk_idx = talk_idx_;
@@ -27,6 +28,7 @@ public class MentData
         menter_img = menter_img_;
         ment_addtime = ment_addtime_;
         ment_data = ment_data_;
+        user_sponsor = user_sponsor_;
     }
 
     //GET
@@ -47,6 +49,7 @@ public class MentData
     }
     public String GET_ment_addtime(){return ment_addtime;}
     public String GET_ment_data(){return ment_data;}
+    public String GET_user_sponsor(){return user_sponsor;}
 
 
 
@@ -60,4 +63,5 @@ public class MentData
     public void SET_menter_img(String value){menter_img = value;}
     public void SET_ment_addtime(String value){ment_addtime = value;}
     public void SET_ment_data(String value){ment_data = value;}
+    public void SET_user_sponsor(String value){user_sponsor = value;}
 }
