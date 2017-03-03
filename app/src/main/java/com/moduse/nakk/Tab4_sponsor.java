@@ -101,6 +101,8 @@ public class Tab4_sponsor extends Activity
 
         loading = new ProgressDialog(this);
 
+        InitShow();
+
         infotext = (TextView) findViewById(R.id.sponsorText);
         payvlue = (TextView) findViewById(R.id.tab4_sponsor_payvalue);
 
@@ -554,7 +556,7 @@ public class Tab4_sponsor extends Activity
     public void InitShow()
     {
         loading.setProgress(ProgressDialog.STYLE_SPINNER);
-        loading.setMessage("정보를 불러오는 중입니다..");
+        loading.setMessage("결제를 요청중입니다..");
     }
     public void SetmsgShow(String value)
     {

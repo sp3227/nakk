@@ -17,6 +17,7 @@
     <!-- 휴대폰 읽기 쓰기 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <!-- 테스크 권한 -->
     <uses-permission android:name="android.permission.GET_TASKS" />​
@@ -35,7 +36,6 @@
         <activity android:name=".Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

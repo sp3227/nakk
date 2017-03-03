@@ -94,6 +94,7 @@ public class Tab1_read extends Activity
 
     public void init_tab1()    //  기본글 불러오기  (전체)
     {
+        Remove_list();
         phptype = phptype_TalkALL;
         talk_type = "ALL";
         appInfo = new AppInfo();
@@ -128,6 +129,7 @@ public class Tab1_read extends Activity
 
     public void all_tab1()    //  기본글 불러오기  (전체)
     {
+        Remove_list();
         phptype = phptype_TalkALL;
         talk_type = "ALL";
         appInfo = new AppInfo();
@@ -162,6 +164,7 @@ public class Tab1_read extends Activity
 
     public void my_tab1()    //  내글 불러오기  (내글)
     {
+        Remove_list();
         phptype = phptype_TalkMY;
         talk_type = "MY";
         appInfo = new AppInfo();

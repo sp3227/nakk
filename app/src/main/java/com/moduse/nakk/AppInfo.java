@@ -30,6 +30,12 @@ public class AppInfo extends Application
     //회원가입 URL
     private String SignUpURL = UNITY_URL+"User_signup.php";
 
+    //광고 불러오기
+    private String Ad_loadURL = UNITY_URL+"Ad_select.php";
+
+    //광고 이미지 경로
+    private String Ad_loadimgURL = "http://nakk20.raonnet.com/ad/";
+
     //탭1 자랑하기 불러오기
     private String Tab1_TalkInselectURL = UNITY_URL+"Jaraing_talk_select.php";
 
@@ -122,6 +128,9 @@ public class AppInfo extends Application
     public static boolean SaveIndex = false;
     public static int SaveIndexNum = 0;
 
+    // 광고 보여지는 뷰
+    public static String ViewAD = "";
+
 
     // get
     public String Get_DaumKey(){return DaumKey;}
@@ -135,6 +144,8 @@ public class AppInfo extends Application
     public String Get_CertificationURL(){return CertificationURL;}
     public String Get_LoginURL(){return LoginURL;}
     public String Get_SignUpURL(){return SignUpURL;}
+    public String Get_Ad_loadURL(){return Ad_loadURL;}
+    public String Get_Ad_loadimgURLL(){return Ad_loadimgURL;}
     public String Get_Tab1_TalkInselectURL(){return Tab1_TalkInselectURL;}
     public String Get_Tab1_TalkdeleteURL(){return Tab1_TalkdeleteURL;}
     public String Get_Tab1_TalklikeURL(){return Tab1_TalklikeURL;}

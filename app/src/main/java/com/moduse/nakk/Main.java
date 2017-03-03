@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +23,45 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+
 public class Main extends Activity
 {
     public static Context MinContext;  // context 스테틱
 
     AppInfo appInfo;   // 데이터
     ProgressDialog loading;   // 프로그레스 설정
+
+    // 애드 광고 관련
+    phpdown task;
+    HashMap<String,Object> banner_1;
+    HashMap<String,Object> banner_2;
+    HashMap<String,Object> banner_3;
+    HashMap<String,Object> banner_4;
+    HashMap<String,Object> banner_base;
+
+    Intent adintent;
+    Uri aduri;
 
     // 탭 JAVA 선언
     public Tab1_read tab1_;
@@ -77,10 +113,39 @@ public class Main extends Activity
 
         AppInfo.StateApp = true;  // 앱 실행상태로 변경
         layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        init_Layout();
+        adView = (ImageView) findViewById(R.id.adView);  // 애드 뷰 (광고 배너)
+
+        ad_submit();
+        ad_load();
 
     }
 
+
+    public void ad_load()
+    {
+
+        banner_1 = new HashMap<String, Object>();       // 배너1 데이터
+        banner_2 = new HashMap<String, Object>();       // 배너2 데이터
+        banner_3 = new HashMap<String, Object>();       // 배너3 데이터
+        banner_4 = new HashMap<String, Object>();       // 배너4 데이터
+        banner_base = new HashMap<String, Object>();    // 배너5 데이터
+
+        ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+            HttpPost httpPost = new HttpPost(appInfo.Get_Ad_loadURL());
+            httpPost.setEntity(entity);
+
+            task = new phpdown();    // 쓰레드 시작
+            task.execute(httpPost);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+            Log.e("Exception Error", e.toString());
+        }
+
+    }
 
     public void init_Layout()        // 초기 세팅
     {
@@ -104,11 +169,20 @@ public class Main extends Activity
         add_Linear.removeAllViews();
         add_Linear.addView(tab1_.in_layout,layoutParams);
 
+
+        if(!banner_1.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_1";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_1.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
         tab1_.init_tab1();
 
-        String adimg = "http://nakk20.raonnet.com/ad/default_banner.gif";
-        adView = (ImageView) findViewById(R.id.adView);  // 애드 뷰 (광고 배너)
-        Glide.with(this.getApplicationContext()).load(adimg).asGif().diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
     }
 
     // TAB 버튼 세팅
@@ -121,6 +195,17 @@ public class Main extends Activity
         add_Linear.removeAllViews();
         add_Linear.addView(tab1_.in_layout,layoutParams);
 
+        if(!banner_1.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_1";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_1.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
         tab1_.all_tab1();
     }
 
@@ -132,6 +217,17 @@ public class Main extends Activity
         add_Linear.removeAllViews();
         add_Linear.addView(tab2_.in_layout);
 
+        if(!banner_2.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_2";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_2.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
         tab2_.init_tab2();
     }
 
@@ -142,6 +238,17 @@ public class Main extends Activity
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         add_Linear.removeAllViews();
         add_Linear.addView(tab3_.in_layout);
+
+        if(!banner_3.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_3";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_3.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
 
         //tab3_.init_tab3();
     }
@@ -156,7 +263,83 @@ public class Main extends Activity
         layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         add_Linear.addView(tab4_.in_layout,layoutParams);
 
+        if(!banner_4.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_4";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_4.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
         tab4_.init_tab4();
+    }
+
+////////////////////////애드 광고 클릭 부분 //////////////////////
+    public void ad_submit()
+    {
+        adView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String type ="";
+                String data ="";
+
+
+                if(AppInfo.ViewAD.toString().equals("banner_1"))
+                {
+                    type = banner_1.get("type").toString();
+                    data = banner_1.get("data").toString();
+                }
+                else if(AppInfo.ViewAD.toString().equals("banner_2"))
+                {
+                    type = banner_2.get("type").toString();
+                    data = banner_2.get("data").toString();
+                }
+                else if(AppInfo.ViewAD.toString().equals("banner_3"))
+                {
+                    type = banner_3.get("type").toString();
+                    data = banner_3.get("data").toString();
+                }
+                else if(AppInfo.ViewAD.toString().equals("banner_4"))
+                {
+                    type = banner_4.get("type").toString();
+                    data = banner_4.get("data").toString();
+                }
+                else if(AppInfo.ViewAD.toString().equals("banner_base"))
+                {
+                    type = banner_base.get("type").toString();
+                    data = banner_base.get("data").toString();
+                }
+
+
+                // 실행
+                if(type.toString().equals("url"))
+                {
+                    adintent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+                    startActivity(adintent);
+                }
+                else if(type.toString().equals("call"))
+                {
+                    adintent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+data));
+                    startActivity(adintent);
+                }
+                else if(type.toString().equals("email"))
+                {
+                    adintent = new Intent(Intent.ACTION_SEND);
+                    adintent.setType("plain/text");
+                    String[] tos = {data};
+                    adintent.putExtra(Intent.EXTRA_EMAIL, tos);
+                    adintent.putExtra(Intent.EXTRA_SUBJECT, "[낚중일기] 광고 문의합니다.");
+                    adintent.putExtra(Intent.EXTRA_TEXT, "광고 하고자 하는 내용을 작성 또는 첨부하여 보내주시면 답변드리겠습니다. \n\n-낚중일기-");
+                    startActivity(adintent);
+                }
+
+            }
+        });
     }
 
 
@@ -363,6 +546,267 @@ public class Main extends Activity
             icon_tab4.setImageDrawable(tab4img);
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////// 통신
+
+
+    private class phpdown extends AsyncTask<HttpPost, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected String doInBackground(HttpPost... urls) {
+            String returnData = "";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpResponse response = new HttpResponse() {
+                @Override
+                public StatusLine getStatusLine() {
+                    return null;
+                }
+
+                @Override
+                public void setStatusLine(StatusLine statusLine) {
+                }
+
+                @Override
+                public void setStatusLine(ProtocolVersion protocolVersion, int i) {
+                }
+
+                @Override
+                public void setStatusLine(ProtocolVersion protocolVersion, int i, String s) {
+                }
+
+                @Override
+                public void setStatusCode(int i) throws IllegalStateException {
+                }
+
+                @Override
+                public void setReasonPhrase(String s) throws IllegalStateException {
+                }
+
+                @Override
+                public HttpEntity getEntity() {
+                    return null;
+                }
+
+                @Override
+                public void setEntity(HttpEntity httpEntity) {
+                }
+
+                @Override
+                public Locale getLocale() {
+                    return null;
+                }
+
+                @Override
+                public void setLocale(Locale locale) {
+                }
+
+                @Override
+                public ProtocolVersion getProtocolVersion() {
+                    return null;
+                }
+
+                @Override
+                public boolean containsHeader(String s) {
+                    return false;
+                }
+
+                @Override
+                public Header[] getHeaders(String s) {
+                    return new Header[0];
+                }
+
+                @Override
+                public Header getFirstHeader(String s) {
+                    return null;
+                }
+
+                @Override
+                public Header getLastHeader(String s) {
+                    return null;
+                }
+
+                @Override
+                public Header[] getAllHeaders() {
+                    return new Header[0];
+                }
+
+                @Override
+                public void addHeader(Header header) {
+                }
+
+                @Override
+                public void addHeader(String s, String s1) {
+                }
+
+                @Override
+                public void setHeader(Header header) {
+                }
+
+                @Override
+                public void setHeader(String s, String s1) {
+                }
+
+                @Override
+                public void setHeaders(Header[] headers) {
+                }
+
+                @Override
+                public void removeHeader(Header header) {
+                }
+
+                @Override
+                public void removeHeaders(String s) {
+                }
+
+                @Override
+                public HeaderIterator headerIterator() {
+                    return null;
+                }
+
+                @Override
+                public HeaderIterator headerIterator(String s) {
+                    return null;
+                }
+
+                @Override
+                public HttpParams getParams() {
+                    return null;
+                }
+
+                @Override
+                public void setParams(HttpParams httpParams) {
+                }
+            };
+
+
+            try {
+                response = httpclient.execute(urls[0]);
+            } catch (Exception e) {
+                // 서버에 연결할 수 없습니다 토스트 메세지 보내기
+//                Toast.makeText((MainActivity) MainActivity.mContext, ((MainActivity) MainActivity.mContext).getResources().getText(R.string.server_connect_error), Toast.LENGTH_SHORT).show();
+                Log.e("TalkPagePost Exception", e.toString());
+            }
+
+            try {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                StringBuilder builder = new StringBuilder();
+                String str = "";
+
+                while ((str = rd.readLine()) != null) {
+                    builder.append(str);
+                }
+
+                returnData = builder.toString();
+            } catch (Exception e) {
+//                Toast.makeText((MainActivity) MainActivity.mContext, ((MainActivity) MainActivity.mContext).getResources().getText(R.string.server_connect_error), Toast.LENGTH_SHORT).show();
+                Log.e("TalkPagePost Exception", e.toString());
+            }
+
+            return returnData;
+        }
+
+        @Override
+        protected void onPostExecute(String str) {
+
+            // 보기 좋은 형태로 변수에 대입
+            String idx_;
+            String state_;
+            String position_;
+            String type_;
+            String data_;
+            String adimg_;
+            String addatetime_;
+
+            if (!str.toString().equals("sql_error"))
+            {
+                try {
+                    JSONObject root = new JSONObject(str);
+
+                    JSONArray ja = root.getJSONArray("result");
+
+                    for (int i = 0; i < ja.length(); i++) {
+
+                        JSONObject jo = ja.getJSONObject(i);
+                        idx_ = jo.getString("idx");
+                        state_ = jo.getString("state");
+                        position_ = jo.getString("position");
+                        type_ = jo.getString("type");
+                        data_ = jo.getString("data");
+                        adimg_ = jo.getString("adimg");
+                        addatetime_ = jo.getString("addatetime");
+
+
+                        if(position_.toString().equals("TAB1"))
+                        {
+                            banner_1.put("idx", idx_);
+                            banner_1.put("state", state_);
+                            banner_1.put("position", position_);
+                            banner_1.put("type", type_);
+                            banner_1.put("data", data_);
+                            banner_1.put("adimg", adimg_);
+                            banner_1.put("addatetime", addatetime_);
+                        }
+                        else if(position_.toString().equals("TAB2"))
+                        {
+                            banner_2.put("idx", idx_);
+                            banner_2.put("state", state_);
+                            banner_2.put("position", position_);
+                            banner_2.put("type", type_);
+                            banner_2.put("data", data_);
+                            banner_2.put("adimg", adimg_);
+                            banner_2.put("addatetime", addatetime_);
+                        }
+                        else if(position_.toString().equals("TAB3"))
+                        {
+                            banner_3.put("idx", idx_);
+                            banner_3.put("state", state_);
+                            banner_3.put("position", position_);
+                            banner_3.put("type", type_);
+                            banner_3.put("data", data_);
+                            banner_3.put("adimg", adimg_);
+                            banner_3.put("addatetime", addatetime_);
+                        }
+                        else if(position_.toString().equals("TAB4"))
+                        {
+                            banner_4.put("idx", idx_);
+                            banner_4.put("state", state_);
+                            banner_4.put("position", position_);
+                            banner_4.put("type", type_);
+                            banner_4.put("data", data_);
+                            banner_4.put("adimg", adimg_);
+                            banner_4.put("addatetime", addatetime_);
+                        }
+                        else if(position_.toString().equals("BASE"))
+                        {
+                            banner_base.put("idx", idx_);
+                            banner_base.put("state", state_);
+                            banner_base.put("position", position_);
+                            banner_base.put("type", type_);
+                            banner_base.put("data", data_);
+                            banner_base.put("adimg", adimg_);
+                            banner_base.put("addatetime", addatetime_);
+                        }
+
+                    }
+
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                init_Layout();
+            }
+        }
+    }
+
+
+
 
 
     // 뒤로가기 (종료 메인이라서)
