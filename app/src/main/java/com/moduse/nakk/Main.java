@@ -211,24 +211,28 @@ public class Main extends Activity
 
     public void Btn_Tab_2(View v)   // 탭2  포인트
     {
-        icon_changeTab("tab2");
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        add_Linear.removeAllViews();
-        add_Linear.addView(tab2_.in_layout);
+        Intent intent = new Intent(this, Tab2_read.class);
 
         if(!banner_2.get("state").toString().equals("none"))
         {
             AppInfo.ViewAD = "banner_2";
-            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_2.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+            intent.putExtra("ad_type",banner_2.get("type").toString());
+            intent.putExtra("ad_data",banner_2.get("data").toString());
+            intent.putExtra("ad_img",banner_2.get("adimg").toString());
         }
         else
         {
             AppInfo.ViewAD = "banner_base";
-            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+            intent.putExtra("ad_type",banner_base.get("type").toString());
+            intent.putExtra("ad_data",banner_base.get("data").toString());
+            intent.putExtra("ad_img",banner_base.get("adimg").toString());
+
         }
 
-        tab2_.init_tab2();
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+
     }
 
     public void Btn_Tab_3(View v)   // 탭3  낚중일기
@@ -277,7 +281,113 @@ public class Main extends Activity
         tab4_.init_tab4();
     }
 
-////////////////////////애드 광고 클릭 부분 //////////////////////
+
+   /////////////////////////////////////////////////////// // 탭 함수로 설정
+
+
+    public void ftn_Tab_1()   // 탭1 자랑하기
+    {
+        icon_changeTab("tab1");
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        add_Linear.removeAllViews();
+        add_Linear.addView(tab1_.in_layout,layoutParams);
+
+        if(!banner_1.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_1";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_1.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
+        tab1_.all_tab1();
+    }
+
+    public void ftn_Tab_2()   // 탭2  포인트
+    {
+
+        Intent intent = new Intent(this, Tab2_read.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+
+
+        /*
+        icon_changeTab("tab2");
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        add_Linear.removeAllViews();
+        add_Linear.addView(tab2_.in_layout);
+
+        if(!banner_2.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_2";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_2.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
+        tab2_.init_tab2();
+        */
+    }
+
+    public void ftn_Tab_3()   // 탭3  낚중일기
+    {
+        icon_changeTab("tab3");
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        add_Linear.removeAllViews();
+        add_Linear.addView(tab3_.in_layout);
+
+        if(!banner_3.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_3";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_3.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
+        //tab3_.init_tab3();
+    }
+
+    public void ftn_Tab_4()   // 탭4  설정
+    {
+        icon_changeTab("tab4");
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        add_Linear.removeAllViews();
+
+        layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        add_Linear.addView(tab4_.in_layout,layoutParams);
+
+        if(!banner_4.get("state").toString().equals("none"))
+        {
+            AppInfo.ViewAD = "banner_4";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_4.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+        else
+        {
+            AppInfo.ViewAD = "banner_base";
+            Glide.with(this.getApplicationContext()).load(appInfo.Get_Ad_loadimgURLL()+banner_base.get("adimg").toString()).asGif().thumbnail(0.5f).diskCacheStrategy(DiskCacheStrategy.NONE).into(adView);
+        }
+
+        tab4_.init_tab4();
+    }
+
+
+
+
+
+    ////////////////////////애드 광고 클릭 부분 //////////////////////
     public void ad_submit()
     {
         adView.setOnClickListener(new View.OnClickListener()

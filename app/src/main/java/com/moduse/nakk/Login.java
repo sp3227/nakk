@@ -63,7 +63,7 @@ public class Login extends AppCompatActivity {
     // 푸시 아이디 가져오기
     public void Pushtoken()
     {
-        SENDER_ID = getString(R.string.gcm_defaultSenderId);;
+        SENDER_ID = getString(R.string.gcm_defaultSenderId);
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -102,6 +102,7 @@ public class Login extends AppCompatActivity {
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);   // 키보드 관리 내리기 올리기 설정
 
         //초기화
+        InitShow();
 
         setting = getSharedPreferences("setting", 0);  // 자동 로그인 부분 설정
         editor= setting.edit();
@@ -115,14 +116,7 @@ public class Login extends AppCompatActivity {
         }
 
         // 로그인 부분 불러오기 (로컬)
-        if(setting.getBoolean("PUSH_STATE",false))
-        {
-            AppInfo.Push_state = false;
-        }
-        else
-        {
-            AppInfo.Push_state = true;
-        }
+        AppInfo.Push_state = !setting.getBoolean("PUSH_STATE", false);
 
         user_id.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +144,7 @@ public class Login extends AppCompatActivity {
 
     public void btn_login(View v)
     {
+        StartShow();
         String id = user_id.getText().toString();
         String pass = user_pass.getText().toString();
 
@@ -218,7 +213,7 @@ public class Login extends AppCompatActivity {
     public void InitShow()
     {
         loading.setProgress(ProgressDialog.STYLE_SPINNER);
-        loading.setMessage("정보를 불러오는 중입니다..");
+        loading.setMessage("낚중일기에 접속중입니다..");
     }
     public void SetmsgShow(String value)
     {
@@ -349,6 +344,8 @@ public class Login extends AppCompatActivity {
         task.execute(id,pass,token,url);  // 함수 쓰레드 시작
 
     }
+
+
 
 
 }

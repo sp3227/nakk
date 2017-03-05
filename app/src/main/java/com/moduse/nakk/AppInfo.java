@@ -69,6 +69,9 @@ public class AppInfo extends Application
     //탭1 자랑하기 멘트 삭제
     private String Tab1_MentdeleteURL = UNITY_URL+"Jaraing_ment_delete.php";
 
+    //탭2 포인트 불러오기
+    private String Tab2_PointselectURL = UNITY_URL+"Point_select.php";
+
     //탭3 유튜브
     private String Tab3_YoutubeURL = UNITY_URL+"youtubelist.php";
 
@@ -131,6 +134,10 @@ public class AppInfo extends Application
     // 광고 보여지는 뷰
     public static String ViewAD = "";
 
+    //지도 포인트 맵
+
+    public static int Select_MapType = 1;
+
 
     // get
     public String Get_DaumKey(){return DaumKey;}
@@ -157,6 +164,9 @@ public class AppInfo extends Application
     public String Get_Tab1_MentloadURL(){return Tab1_MentloadURL;}
     public String Get_Tab1_MentaddURL(){return Tab1_MentaddURL;}
     public String Get_Tab1_MentdeleteURL(){return Tab1_MentdeleteURL;}
+
+
+    public String Get_Tab2_PointselectURL(){return Tab2_PointselectURL;}
 
 
     public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}

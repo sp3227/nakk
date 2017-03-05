@@ -2,6 +2,7 @@ package com.moduse.nakk;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -52,6 +53,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class Tab1_read extends Activity
 {
+    ProgressDialog loading;
 
     public LinearLayout in_layout;
     public LayoutInflater Inflater;
@@ -84,6 +86,9 @@ public class Tab1_read extends Activity
 
     Tab1_read()
     {
+        loading = new ProgressDialog(Main.MinContext);
+        InitShow();
+
         Inflater = ((Main) Main.MinContext).getLayoutInflater();
         Inflater = (LayoutInflater) Main.MinContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -94,7 +99,10 @@ public class Tab1_read extends Activity
 
     public void init_tab1()    //  기본글 불러오기  (전체)
     {
-        Remove_list();
+        StartShow();
+        if(!LastTalkVisibleFlag) {
+            Remove_list();
+        }
         phptype = phptype_TalkALL;
         talk_type = "ALL";
         appInfo = new AppInfo();
@@ -129,7 +137,10 @@ public class Tab1_read extends Activity
 
     public void all_tab1()    //  기본글 불러오기  (전체)
     {
-        Remove_list();
+        StartShow();
+        if(!LastTalkVisibleFlag) {
+            Remove_list();
+        }
         phptype = phptype_TalkALL;
         talk_type = "ALL";
         appInfo = new AppInfo();
@@ -164,7 +175,10 @@ public class Tab1_read extends Activity
 
     public void my_tab1()    //  내글 불러오기  (내글)
     {
-        Remove_list();
+        StartShow();
+        if(!LastTalkVisibleFlag) {
+            Remove_list();
+        }
         phptype = phptype_TalkMY;
         talk_type = "MY";
         appInfo = new AppInfo();
@@ -200,6 +214,7 @@ public class Tab1_read extends Activity
     // 글 삭제 하기
     public void delete_Talk(String device_id, String talk_idx)
     {
+        StartShow();
         phptype = phptype_TalkDELETE;
         appInfo = new AppInfo();
 
@@ -232,6 +247,7 @@ public class Tab1_read extends Activity
     // 좋아요 하기
     public void like_talk(String talk_idx, String device_id_taget, String device_id_liker)
     {
+        StartShow();
         phptype = phptype_TalkLIKE;
         appInfo = new AppInfo();
 
@@ -396,6 +412,7 @@ public class Tab1_read extends Activity
         @Override
         protected void onPostExecute(String str)
         {
+            StopShow();
             switch (phptype)
             {
                 case phptype_TalkALL :  //전체보기
@@ -942,5 +959,18 @@ public class Tab1_read extends Activity
         });
     }
 
+
+    // 프로그레스 설정
+    public void InitShow()
+    {
+        loading.setProgress(ProgressDialog.STYLE_SPINNER);
+        loading.setMessage("정보를 불러오는 중입니다..");
+    }
+    public void SetmsgShow(String value)
+    {
+        loading.setMessage(value);
+    }
+    public void StartShow() {loading.show();}
+    public void StopShow() {loading.dismiss();}
 
 }

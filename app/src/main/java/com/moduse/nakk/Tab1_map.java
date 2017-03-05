@@ -63,6 +63,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
 
     // 포인트 찍기 텝1 작성 위치 부분
     boolean TagetPoint_state = false;
+    MapPOIItem Select_item = null;
 
     LinearLayout PointSelect_Menu;
 
@@ -154,8 +155,12 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
                 talkintent.putExtra("point_longitude", Talk_Point_longitude);
                 talkintent.putExtra("point_address", Talk_Point_domicile);
                 setResult(RESULT_OK, talkintent);
+
+                // 다음맵 닫기
+                mapView.onPause();
                 DaumLaout.removeAllViews();
                 finish();
+
             } else {
                 Toast.makeText(getApplicationContext(), "찍은 포인트가 없습니다!", Toast.LENGTH_SHORT).show();
             }
@@ -168,12 +173,16 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
                 talkintent.putExtra("point_longitude", Fix_Point_longitude);
                 talkintent.putExtra("point_address", Talk_Point_domicile);
                 setResult(RESULT_OK, talkintent);
+
+                // 다음맵 닫기
+                mapView.onPause();
                 DaumLaout.removeAllViews();
                 finish();
             } else {
                 Toast.makeText(getApplicationContext(), "찍은 포인트가 없습니다!", Toast.LENGTH_SHORT).show();
             }
         }
+
 
     }
     public void My_locationinit( int type)  // MY GPS 받아오기
@@ -382,6 +391,12 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
 
             MapPOIItem marker = new MapPOIItem();
 
+            if(Select_item != null)
+            {
+                mapView.removePOIItem(Select_item);
+                Select_item = null;
+            }
+
             marker.setItemName("포인트");
             marker.setTag(0);
             marker.setMapPoint(MapPoint.mapPointWithGeoCoord(mapPointGeo.latitude, mapPointGeo.longitude));
@@ -390,7 +405,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
             marker.setCustomImageAutoscale(false);
 
             TagetPoint_state = true;
-
+            Select_item = marker;
             // 주소찾기
             Find_domicile_start(Talk_Point_latitude, Talk_Point_longitude);
             mapView.addPOIItem(marker);
@@ -514,6 +529,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
             AppInfo.SaveIndex = true;
         }
         DaumLaout.removeAllViews();
+        mapView.onPause();
         finish();
     }
 
@@ -532,10 +548,21 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
                     AppInfo.SaveIndex = true;
                 }
                 DaumLaout.removeAllViews();
+                mapView.onPause();
                finish();
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+        DaumLaout.removeAllViews();
+        mapView.onPause();
     }
 
     // 프로그레스 설정

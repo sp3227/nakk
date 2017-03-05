@@ -130,6 +130,9 @@ public class Tab_addtalk extends Activity
     Double point_longitude = null;
     String point_address = "";
 
+    Double tmp_Point1 = 37.551409;
+    Double tmp_Point2 = 126.953151;
+
 
 
     @Override
@@ -202,13 +205,24 @@ public class Tab_addtalk extends Activity
             intent.putExtra("type", "point_select");
             startActivityForResult(intent, MAP_SELECT);
         }
-        else if(WriteType.toString().equals("FIX") && fixdata.get("talk_locationstate").toString().equals("true"))  // 기존에 위치가 있으면
+        else if(WriteType.toString().equals("FIX"))  // 기존에 위치가 있으면
         {
-            Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
-            intent.putExtra("type", "point_select_fix");
-            intent.putExtra("fix_latitude",point_latitude);
-            intent.putExtra("fix_longitude",point_longitude);
-            startActivityForResult(intent, MAP_SELECT);
+            if(fixdata.get("talk_locationstate").toString().equals("true"))
+            {
+                Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
+                intent.putExtra("type", "point_select_fix");
+                intent.putExtra("fix_latitude", point_latitude);
+                intent.putExtra("fix_longitude", point_longitude);
+                startActivityForResult(intent, MAP_SELECT);
+            }
+            else
+            {
+                Intent intent = new Intent(this.getApplicationContext(), Tab1_map.class);
+                intent.putExtra("type", "point_select_fix");
+                intent.putExtra("fix_latitude", tmp_Point1);
+                intent.putExtra("fix_longitude", tmp_Point2);
+                startActivityForResult(intent, MAP_SELECT);
+            }
         }
     }
 
@@ -222,7 +236,7 @@ public class Tab_addtalk extends Activity
     //완료 버튼(서버 통신 시작)
     public void tab1_add_btn_submit(View v)
     {
-
+        StartShow();
         if(WriteType.toString().equals("ADD")) {
             talk_data = edit_data.getText().toString();
             ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
@@ -674,6 +688,7 @@ public class Tab_addtalk extends Activity
 
         protected void onPostExecute(String result) {
             //loading.dismiss();
+            StopShow();
             Log.i("result",result);
             if(WriteType.toString().equals("ADD"))
             {
