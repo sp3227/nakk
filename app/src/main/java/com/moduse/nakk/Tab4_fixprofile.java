@@ -167,6 +167,33 @@ public class Tab4_fixprofile extends Activity
         }
     }
 
+    // 기존 프로필 불러오기
+    public void php_profileimg_delete()
+    {
+        StartShow();
+        phptype = "IMG_DELETE";
+
+        ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+        post.add(new BasicNameValuePair("loginID", AppInfo.MY_LOGINID));
+        post.add(new BasicNameValuePair("userID", AppInfo.MY_DEVICEID));
+        post.add(new BasicNameValuePair("profileimg", ""+userdata.get("user_profileimg")));
+
+
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+            HttpPost httpPost = new HttpPost(appInfo.Get_Tab4_fix_profile_imgdelete());
+            httpPost.setEntity(entity);
+
+            task = new phpdown();    // 쓰레드 시작
+            task.execute(httpPost);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+            Log.e("Exception Error", e.toString());
+        }
+    }
+
 
 
 
@@ -284,9 +311,18 @@ public class Tab4_fixprofile extends Activity
                                 else if (item[i].toString().equals(item[2]))
                                 {
                                     // 이미지 삭제
+                                    php_profileimg_delete();
                                 }
                                 else
                                 {
+                                    if (mImageCaptureUri != null) {
+                                        // 임시 파일 삭제
+                                        File f = new File(mImageCaptureUri.getPath());
+                                        if (f.exists()) {
+                                            f.delete();
+
+                                        }
+                                    }
                                     dialogInterface.dismiss();
                                 }
                             }
@@ -700,6 +736,24 @@ public class Tab4_fixprofile extends Activity
                     Toast.makeText(getBaseContext(), "인터넷 환경이 불안정합니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
                 }
             }
+            else if(phptype.toString().equals("IMG_DELETE"))
+            {
+                if(result.toString().equals("SUCCESS"))
+                {
+                    Toast.makeText(getBaseContext(), "프로필 사진이 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
+                    userdata.put("user_profileimg","none");
+                    Load_UiUpdate();
+                }
+                else if(result.toString().equals("IMG_delete_failed"))
+                {
+                    Toast.makeText(getBaseContext(), "삭제할 이미지가 없습니다. ", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getBaseContext(), "인터넷 환경이 불안정합니다. 확인해주세요.", Toast.LENGTH_SHORT).show();
+                }
+            }
+            StopShow();
         }
     }
 /////////////////////////////////////////////////////////////////////////////// 통신 부분 끝 (END) ////////////////////////////////////////////////////////////////////////

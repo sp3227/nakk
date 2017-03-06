@@ -44,9 +44,9 @@
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/tab2_read_point_img"
                         android:layout_width="130dp"
-                        android:layout_height="130dp"
-                        android:src="@drawable/write_talkimg" />
+                        android:layout_height="130dp" />
 
                 </LinearLayout>
 
@@ -57,11 +57,12 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tab2_read_point_time"
                         android:layout_width="150dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/btn_sora"
                         android:gravity="center"
-                        android:text="2017.12.12 "
+                        android:text=""
                         android:textColor="#000000"
                         android:textSize="17dp"
                         android:textStyle="bold|italic" />
@@ -76,10 +77,11 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tab2_read_point_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="광주광역시 남구 양림동 "
+                        android:text=""
                         android:textColor="@color/colorSora"
                         android:textSize="19dp"
                         android:textStyle="bold|italic" />
@@ -107,6 +109,7 @@
                     android:gravity="top|left" />
 
                 <TextView
+                    android:id="@+id/tab2_read_point_datafield"
                     android:paddingRight="8dp"
                     android:paddingLeft="8dp"
                     android:paddingBottom="8dp"
@@ -114,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:textSize="15dp"
-                    android:text="안녕 이 ㅇㅀ놈들아 하하하핫 안녕 맛탕이 마싯다 따 ㅎㅎㅎㅇㅀㅇㅎ\n\n\n\"
+                    android:text=""
                     android:textStyle="italic"
                     android:gravity="top|left"/>
 
@@ -140,6 +143,7 @@
                     android:gravity="top|left" />
 
                 <TextView
+                    android:id="@+id/tab2_read_point_datapreparation"
                     android:paddingRight="8dp"
                     android:paddingLeft="8dp"
                     android:paddingBottom="8dp"
@@ -147,7 +151,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:textSize="15dp"
-                    android:text="안녕 이 ㅇㅀ놈들아 하하하핫 안녕 맛탕이 마싯다 따 ㅎㅎㅎㅇㅀㅇㅎ"
+                    android:text=""
                     android:textStyle="italic"
                     android:gravity="top|left"/>
             </LinearLayout>
@@ -173,6 +177,7 @@
                     android:id="@+id/textView" />
 
                 <TextView
+                    android:id="@+id/tab2_read_point_dataetc"
                     android:paddingRight="8dp"
                     android:paddingLeft="8dp"
                     android:paddingBottom="8dp"
@@ -180,7 +185,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:textSize="15dp"
-                    android:text="안녕 이 ㅇㅀ놈들아 하하하핫 안녕 맛탕이 마싯다 따 ㅎㅎㅎㅇㅀㅇㅎ\n\n\n\"
+                    android:text=""
                     android:textStyle="italic"
                     android:gravity="top|left"/>
             </LinearLayout>
@@ -194,6 +199,9 @@
                 android:gravity="center">
 
                 <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/tab2_read_fix_lin"
+                    android:onClick="tab2_btn_read_fix"
                     android:layout_width="130dp"
                     android:layout_height="30dp"
                     android:background="@drawable/btn_blackound3">
@@ -210,6 +218,9 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/tab2_read_delete_lin"
+                    android:onClick="tab2_btn_read_delete"
                     android:layout_marginLeft="30dp"
                     android:layout_width="130dp"
                     android:layout_height="30dp"

@@ -72,6 +72,22 @@ public class AppInfo extends Application
     //탭2 포인트 불러오기
     private String Tab2_PointselectURL = UNITY_URL+"Point_select.php";
 
+    //탭2 포인트 디테일 불러오기
+    private String Tab2_PointdetailselectURL = UNITY_URL+"Point_detail_select.php";
+
+    //탭2 포인트 이미지 폴더 경로
+    private String Tab2_PointimgFTP_URL = "http://nakk20.raonnet.com/pointimg/";
+
+    //탭2 포인트 추가
+    private String Tab2_PointaddURL = UNITY_URL+"Point_add.php";
+
+    //탭2 포인트 이미지 추가
+    private String Tab2_PointaddimgURL = UNITY_URL+"Point_addimg.php";
+
+
+    //탭2 포인트 삭제
+    private String Tab2_PointdeleteURL = UNITY_URL+"Point_delete.php";
+
     //탭3 유튜브
     private String Tab3_YoutubeURL = UNITY_URL+"youtubelist.php";
 
@@ -167,6 +183,11 @@ public class AppInfo extends Application
 
 
     public String Get_Tab2_PointselectURL(){return Tab2_PointselectURL;}
+    public String Get_Tab2_PointdetailselectURL(){return Tab2_PointdetailselectURL;}
+    public String Get_Tab2_PointimgFTP_URL(){return Tab2_PointimgFTP_URL;}
+    public String Get_Tab2_PointdeleteURL(){return Tab2_PointdeleteURL;}
+    public String Get_Tab2_PointaddURL(){return Tab2_PointaddURL;}
+    public String Get_Tab2_PointaddimgURL(){return Tab2_PointaddimgURL;}
 
 
     public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}

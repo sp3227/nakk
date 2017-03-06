@@ -136,7 +136,6 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         //isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);   // 사용 체크 GPS1
         isGPSEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);   // 사용 체크 GPS2  (GPS1)은 정확하나 받아오기 실패 할 수 있음
 
-
         //레이아웃
         DaumLaout = (RelativeLayout) findViewById(R.id.tab2_map_view);
         categry_text = (TextView) findViewById(R.id.tab2_text_category);
@@ -151,7 +150,18 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         AdSetting();
         TabSetting();
 
-        My_locationinit(GPS_START);  // 자기 위치 가져오고 다음맵 실행
+        if(!isGPSEnabled)
+        {
+            // GPS가 꺼져있을 시 앱이 수행할 작업 코드
+            Toast.makeText(this,"GPS가 꺼져있습니다. 확인해주세요.",Toast.LENGTH_SHORT).show();
+            DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
+
+        }
+        else
+        {
+            My_locationinit(GPS_START);  // 자기 위치 가져오고 다음맵 실행
+        }
+
 
 
 
@@ -333,11 +343,12 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         {
             Intent intent = new Intent(this, Tab2_addpoint.class);
 
+            intent.putExtra("point_type","ADD");
             intent.putExtra("point_latitude",Select_Point_latitude);
             intent.putExtra("point_longitude",Select_Point_longitude);
             intent.putExtra("point_address",Select_Point_adress);
 
-            startActivity(intent);
+            startActivityForResult(intent,3);
         }
         else
         {
@@ -440,7 +451,6 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
 
         if (Select_Categry == Categry_open)
         {
-            Log.i("phpinit", "1");
             //post 인자값 전달
             Vector<NameValuePair> list = new Vector<NameValuePair>();
 
@@ -488,6 +498,46 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         }
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////인텐트 REDULT
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.i("UPLOAD_TYPE", "ture");
+        if (requestCode == 2)
+        {
+
+            String tmpType = "";
+            tmpType = data.getStringExtra("updatecode");
+
+            if (tmpType.toString().equals("REFRASH")) {
+                mapView.removePOIItems(mapView.getPOIItems());
+                Select_Categry = Categry_open;
+                tamp_index = 0;
+                listItem.clear();
+                Load_Point();  // 포인트 불러오기  PHP 통신
+            }
+        }
+        if (requestCode == 3)
+        {
+
+            String tmpType = "";
+            tmpType = data.getStringExtra("updatecode");
+
+            if (tmpType.toString().equals("REFRASH")) {
+                mapView.removePOIItems(mapView.getPOIItems());
+                Select_Categry = Categry_open;
+                tamp_index = 0;
+                listItem.clear();
+                Load_Point();  // 포인트 불러오기  PHP 통신
+            }
+        }
+
+
+    }
+
 
 
 
@@ -557,7 +607,9 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     {
 
         Load_Point();  // 포인트 불러오기  PHP 통신
-        locationManager.removeUpdates(locationListener);  // GPS 닫기
+        if(isGPSEnabled) {
+            locationManager.removeUpdates(locationListener);  // GPS 닫기
+        }
         StopShow();
     }
 
@@ -638,13 +690,18 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem)   // 포인트 아이콘 클릭 했을때
     {
-
+        Toast.makeText(this,mapPOIItem.getItemName(),Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem)  // 포인트 아이콘 클릭하고 올라오는 팝업 클릭했을때
     {
+       // Toast.makeText(this,""+mapPOIItem.getTag(),Toast.LENGTH_SHORT).show();
 
+        Intent intent = new Intent(this, Tab2_detail.class);
+        intent.putExtra("Point_idx",""+mapPOIItem.getTag());
+
+        startActivityForResult(intent,2);
     }
 
     @Override
@@ -907,15 +964,24 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             {
                 Double tmp_lat = Double.parseDouble(temp.GET_latitude());
                 Double tmp_log = Double.parseDouble(temp.GET_longtitude());
+                int tmp_idx =  Integer.parseInt(temp.GET_point_idx());
 
                 MapPOIItem marker = new MapPOIItem();
-                marker.setItemName(temp.GET_nickname()+tamp_index);
-                marker.setTag(tamp_index);
+                marker.setItemName(temp.GET_nickname()+"("+temp.GET_addtime()+")");
+                marker.setTag(tmp_idx);
                 marker.setMapPoint(MapPoint.mapPointWithGeoCoord(tmp_lat, tmp_log));
-                marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
-                marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                if(temp.GET_loginID().toString().equals(AppInfo.MY_LOGINID))
+                {
+                    marker.setMarkerType(MapPOIItem.MarkerType.RedPin); // 기본으로 제공하는 BluePin 마커 모양.
+                    marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                }
+                else
+                {
+                    marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+                    marker.setSelectedMarkerType(MapPOIItem.MarkerType.BluePin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                }
 
-                tamp_index += 1;
+               // tamp_index += 1;
 
                 mapView.addPOIItem(marker);
             }
@@ -933,10 +999,11 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
 
 
     @Override
-    protected void onPause()
+    protected void onDestroy()
     {
-        super.onPause();
+        super.onDestroy();
 
+        listItem.clear();
         DaumLaout.removeAllViews();
         mapView.onPause();
         mapView.clearFocus();

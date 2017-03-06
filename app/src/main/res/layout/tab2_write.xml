@@ -75,11 +75,13 @@
                 </RadioGroup>
 
                 <LinearLayout
+                    android:onClick="tab2_btn_selectimg"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:gravity="center">
 
                     <ImageView
+                        android:id="@+id/tab2_addimg"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:src="@drawable/write_talkimg" />
@@ -87,17 +89,19 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:onClick="tab2_btn_date"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tab2_adddate"
                         android:layout_width="150dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/btn_sora"
                         android:gravity="center"
-                        android:text="2017.12.12 "
+                        android:text="날짜선택"
                         android:textColor="#000000"
                         android:textSize="17dp"
                         android:textStyle="bold|italic" />
@@ -112,6 +116,7 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tab2_add_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
@@ -132,6 +137,7 @@
                 android:background="@drawable/input_gray_round">
 
                 <EditText
+                    android:id="@+id/tab2_add_datafield"
                     android:layout_width="match_parent"
                     android:layout_height="110dp"
                     android:gravity="left|top"
@@ -157,6 +163,7 @@
                 android:background="@drawable/input_gray_round">
 
                 <EditText
+                    android:id="@+id/tab2_add_datapreparation"
                     android:layout_width="match_parent"
                     android:layout_height="90dp"
                     android:gravity="left|top"
@@ -182,6 +189,7 @@
                 android:background="@drawable/input_gray_round">
 
                 <EditText
+                    android:id="@+id/tab2_add_dataetc"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:gravity="left|top"
@@ -206,6 +214,8 @@
                 android:gravity="center">
 
                 <LinearLayout
+                    android:id="@+id/tab2_point_add_submit"
+                    android:onClick="tab2_btn_addsubmit"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/btn_blackound">
