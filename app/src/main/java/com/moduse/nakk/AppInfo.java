@@ -84,9 +84,20 @@ public class AppInfo extends Application
     //탭2 포인트 이미지 추가
     private String Tab2_PointaddimgURL = UNITY_URL+"Point_addimg.php";
 
+    //탭2 포인트 수정
+    private String Tab2_PointfixURL = UNITY_URL+"Point_fix.php";
 
     //탭2 포인트 삭제
     private String Tab2_PointdeleteURL = UNITY_URL+"Point_delete.php";
+
+    //탭2 멘트 불러오기
+    private String Tab2_PointmentselectURL = UNITY_URL+"Point_ment_select.php";
+
+    //탭2 멘트 추가하기
+    private String Tab2_PointmentaddURL = UNITY_URL+"Point_ment_add.php";
+
+    //탭2 멘트 삭제
+    private String Tab2_PointmentdeleteURL = UNITY_URL+"Point_ment_delete.php";
 
     //탭3 유튜브
     private String Tab3_YoutubeURL = UNITY_URL+"youtubelist.php";
@@ -108,6 +119,9 @@ public class AppInfo extends Application
 
     //탭4 스폰서 리스트 불러오기
     private String Tab4_sponsorlist_select = UNITY_URL+"Sponsor_select.php";
+
+    //탭4 회원 탈퇴
+    private String Tab4_signoutURL = UNITY_URL+"User_signout.php";
 
     //탭1 이미지 저장 경로 URL
     private String Tab4_ProImgFTP_URL = "http://nakk20.raonnet.com/profileimg/";
@@ -188,6 +202,10 @@ public class AppInfo extends Application
     public String Get_Tab2_PointdeleteURL(){return Tab2_PointdeleteURL;}
     public String Get_Tab2_PointaddURL(){return Tab2_PointaddURL;}
     public String Get_Tab2_PointaddimgURL(){return Tab2_PointaddimgURL;}
+    public String Get_Tab2_PointfixURL(){return Tab2_PointfixURL;}
+    public String Get_Tab2_PointmentselectURL(){return Tab2_PointmentselectURL;}
+    public String Get_Tab2_PointmentaddURL(){return Tab2_PointmentaddURL;}
+    public String Get_Tab2_PointmentdeleteURL(){return Tab2_PointmentdeleteURL;}
 
 
     public String Get_Tab3_YoutubeURL(){return Tab3_YoutubeURL;}
@@ -200,6 +218,8 @@ public class AppInfo extends Application
     public String Get_Tab4_ProImgFTP_URL(){return Tab4_ProImgFTP_URL;}
     public String Get_Tab4_sponsor_pay(){return Tab4_sponsor_pay;}
     public String Get_Tab4_sponsorlist_select(){return Tab4_sponsorlist_select;}
+
+    public String Get_Tab4_signoutURL(){return Tab4_signoutURL;}
 
 
 

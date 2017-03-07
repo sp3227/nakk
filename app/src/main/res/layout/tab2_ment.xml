@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#d2d2d2">
+
+    <LinearLayout
+        android:id="@+id/title_panel"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#191919">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="댓글"
+            android:textColor="#00fef6"
+            android:textSize="20dp"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@+id/title_panel"
+        android:layout_above="@+id/edit_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="7dp"
+            android:background="#d2d2d2">
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/tab2_mentlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="4dp">
+
+        </ListView>
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/edit_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#bababa">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignLeft="@+id/tab2_ment_submit"
+                    android:id="@+id/tab2_ment_edit"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="댓글을 입력해주세요."
+                    android:textColorHint="#ffffff"
+                    android:textSize="17dp"
+                    android:textStyle="italic|bold"
+                    android:textColor="#000000"
+                    android:inputType="text"
+                    android:textCursorDrawable="@android:color/transparent"
+                    android:background="@android:color/transparent"
+                    android:layout_toLeftOf="@+id/tab2_ment_submit"
+                    android:layout_toStartOf="@+id/tab2_ment_submit" />
+
+                <LinearLayout
+                    android:onClick="tab2_btn_ment_submit"
+                    android:id="@+id/tab2_ment_submit"
+                    android:layout_margin="3dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/btn_blackound">
+
+                    <TextView
+                        android:layout_marginRight="3dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="등록"
+                        android:textSize="17dp"
+                        android:textStyle="italic|bold"
+                        android:gravity="center"
+                        android:textColor="#00fef6"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

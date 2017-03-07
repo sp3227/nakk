@@ -29,8 +29,7 @@
                     android:id="@+id/tab1_ment_proimg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_gravity="center|left"
-                    android:src="@drawable/textimg" />
+                    android:layout_gravity="center|left" />
 
                 <TextView
                     android:id="@+id/tab1_ment_nickname"

@@ -126,7 +126,6 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab2);
 
-
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
         InitShow();
@@ -527,6 +526,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             tmpType = data.getStringExtra("updatecode");
 
             if (tmpType.toString().equals("REFRASH")) {
+                Select_item = null;
                 mapView.removePOIItems(mapView.getPOIItems());
                 Select_Categry = Categry_open;
                 tamp_index = 0;
@@ -534,7 +534,6 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
                 Load_Point();  // 포인트 불러오기  PHP 통신
             }
         }
-
 
     }
 
@@ -1005,16 +1004,27 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
 
         listItem.clear();
         DaumLaout.removeAllViews();
-        mapView.onPause();
-        mapView.clearFocus();
+        DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
         overridePendingTransition(0, 0);
     }
+
+
+    public void RefreshMap()
+    {
+        mapView.removePOIItems(mapView.getPOIItems());
+        Select_Categry = Categry_open;
+        tamp_index = 0;
+        listItem.clear();
+        Load_Point();  // 포인트 불러오기  PHP 통신
+    }
+
 
     // 프로그레스 설정
     public void InitShow()
     {
         loading.setProgress(ProgressDialog.STYLE_SPINNER);
         loading.setMessage("정보를 불러오는 중입니다..");
+        loading.setCanceledOnTouchOutside(false);
     }
     public void SetmsgShow(String value)
     {

@@ -43,10 +43,44 @@
                     android:layout_height="130dp"
                     android:gravity="center">
 
-                    <ImageView
-                        android:id="@+id/tab2_read_point_img"
-                        android:layout_width="130dp"
-                        android:layout_height="130dp" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/tab2_read_point_img"
+                            android:layout_width="130dp"
+                            android:layout_height="130dp"/>
+
+                        <LinearLayout
+                            android:onClick="tab2_btn_mentopen"
+                            android:layout_marginRight="15dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp">
+
+                            <ImageView
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:src="@drawable/icon_ment"
+                                android:id="@+id/imageView" />
+
+                            <TextView
+                                android:id="@+id/tab2_ment_num"
+                                android:layout_marginTop="6dp"
+                                android:gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="5 "
+                                android:textStyle="italic"
+                                android:textSize="18dp"
+                                android:textColor="#777777"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 

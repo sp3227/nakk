@@ -73,6 +73,8 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class Tab2_addpoint extends Activity
 {
+
+
     //데이터
     AppInfo appInfo;
 
@@ -96,6 +98,10 @@ public class Tab2_addpoint extends Activity
     // 데이터를 담을 해시 맵
     HashMap<String,Object> pointdata;
     String UploadPoint_idx = null;
+
+    //수정 식별값
+    String FixPoint_idx = null;
+
 
     // 인텐트 데이터
     String phptype;
@@ -146,6 +152,7 @@ public class Tab2_addpoint extends Activity
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
 
+
         InitShow();
 
         // 레이아웃 설정
@@ -184,6 +191,11 @@ public class Tab2_addpoint extends Activity
         else if(intent.getStringExtra("point_type").toString().equals("FIX"))
         {
             pointdata = new HashMap<String, Object>();  // 기존 프로필 데이터를 넣을 리스트 선언
+
+            phptype = intent.getStringExtra("point_type");
+            FixPoint_idx = intent.getStringExtra("point_idx");
+
+            PHP_LOAD_POINT();
         }
 
         /// 레디오 버튼 세팅
@@ -244,7 +256,14 @@ public class Tab2_addpoint extends Activity
                             {
                                 edit_adddataetc = adddataetc.getText().toString();
 
-                                PHP_ADD_POINT();
+                                if(!phptype.toString().equals("FIX"))
+                                {
+                                     PHP_ADD_POINT();
+                                }
+                                else
+                                {
+                                     PHP_FIX_POINT();
+                                }
                             }
                             else
                             {
@@ -275,6 +294,7 @@ public class Tab2_addpoint extends Activity
 
     public void PHP_ADD_POINT()
     {
+        StartShow();
         ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
 
         post.add(new BasicNameValuePair("loginID", AppInfo.MY_LOGINID));
@@ -303,6 +323,63 @@ public class Tab2_addpoint extends Activity
             Log.e("Exception Error", e.toString());
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////// PHP 수정 불러오기
+
+    public void PHP_LOAD_POINT()
+    {
+        StartShow();
+        phptype = "FIXLOAD";
+        ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+        post.add(new BasicNameValuePair("point_idx", FixPoint_idx));
+
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+            HttpPost httpPost = new HttpPost(appInfo.Get_Tab2_PointdetailselectURL());
+            httpPost.setEntity(entity);
+
+            task = new phpdown();    // 쓰레드 시작
+            task.execute(httpPost);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+            Log.e("Exception Error", e.toString());
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////// PHP 포인트 수정 업로드
+
+    public void PHP_FIX_POINT()
+    {
+        StartShow();
+        ArrayList<NameValuePair> post = new ArrayList<NameValuePair>();
+
+        post.add(new BasicNameValuePair("loginID", AppInfo.MY_LOGINID));
+        post.add(new BasicNameValuePair("deviceID", AppInfo.MY_DEVICEID));
+
+        post.add(new BasicNameValuePair("fixpointidx", FixPoint_idx));
+        post.add(new BasicNameValuePair("fixpointstate", Select_type));
+
+        post.add(new BasicNameValuePair("fixpointtime", edit_adddate));
+        post.add(new BasicNameValuePair("fixpointdatafield", edit_adddatafield));
+        post.add(new BasicNameValuePair("fixpointdatapreparation",edit_adddatapreparation));
+        post.add(new BasicNameValuePair("fixpointdataetc", edit_adddataetc));
+
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(post, "UTF-8");
+            HttpPost httpPost = new HttpPost(appInfo.Get_Tab2_PointfixURL());
+            httpPost.setEntity(entity);
+
+            task = new phpdown();    // 쓰레드 시작
+            task.execute(httpPost);
+
+        } catch (Exception e) {
+            Toast.makeText(this, "서버에 연결이 실패 하였습니다. 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+            Log.e("Exception Error", e.toString());
+        }
+    }
+
 
 
     /////////////////////////////////////////////////////////////////////// 날자선택 다이얼로그
@@ -715,17 +792,19 @@ public class Tab2_addpoint extends Activity
                 }
 
             }
-            else if(phptype.toString().equals("LOAD"))
+            else if(phptype.toString().equals("FIXLOAD"))
             {
-                String index_;
-                String user_push_;
-                String user_pass_;
-                String user_device_;
-                String user_nickname_;
-                String user_email_;
-                String user_state_;
-                String user_profileimg_;
-                String user_logindata_;
+                String idx_;
+                String loginID_;
+                String deviceID_;
+                String point_idx_;
+                String point_state_;
+                String point_time_;
+                String point_address_;
+                String point_datafield_;
+                String point_datapreparation_;
+                String point_dataetc_;
+                String point_img_;
 
 
                 try {
@@ -736,25 +815,29 @@ public class Tab2_addpoint extends Activity
                     for (int i = 0; i < ja.length(); i++) {
 
                         JSONObject jo = ja.getJSONObject(i);
-                        index_ = jo.getString("index");
-                        user_push_ = jo.getString("user_push");
-                        user_pass_ = jo.getString("user_pass");
-                        user_device_ = jo.getString("user_device");
-                        user_nickname_ = jo.getString("user_nickname");
-                        user_email_ = jo.getString("user_email");
-                        user_state_ = jo.getString("user_state");
-                        user_profileimg_ = jo.getString("user_profileimg");
-                        user_logindata_ = jo.getString("user_logindata");
+                        idx_ = jo.getString("idx");
+                        loginID_ = jo.getString("loginID");
+                        deviceID_ = jo.getString("deviceID");
+                        point_idx_ = jo.getString("point_idx");
+                        point_state_ = jo.getString("point_state");
+                        point_time_ = jo.getString("point_time");
+                        point_address_ = jo.getString("point_address");
+                        point_datafield_ = jo.getString("point_datafield");
+                        point_datapreparation_ = jo.getString("point_datapreparation");
+                        point_dataetc_ = jo.getString("point_dataetc");
+                        point_img_ = jo.getString("point_img");
 
-                        pointdata.put("index",index_);
-                        pointdata.put("user_push",user_push_);
-                        pointdata.put("user_pass",user_pass_);
-                        pointdata.put("user_device",user_device_);
-                        pointdata.put("user_nickname",user_nickname_);
-                        pointdata.put("user_email",user_email_);
-                        pointdata.put("user_state",user_state_);
-                        pointdata.put("user_profileimg",user_profileimg_);
-                        pointdata.put("user_logindata",user_logindata_);
+                        pointdata.put("idx",idx_);
+                        pointdata.put("loginID",loginID_);
+                        pointdata.put("deviceID",deviceID_);
+                        pointdata.put("point_idx",point_idx_);
+                        pointdata.put("point_state",point_state_);
+                        pointdata.put("point_time",point_time_);
+                        pointdata.put("point_address",point_address_);
+                        pointdata.put("point_datafield",point_datafield_);
+                        pointdata.put("point_datapreparation",point_datapreparation_);
+                        pointdata.put("point_dataetc",point_dataetc_);
+                        pointdata.put("point_img",point_img_);
 
                     }
 
@@ -765,6 +848,7 @@ public class Tab2_addpoint extends Activity
                 }
 
                 // UI 적용 함수 시작
+                phptype = "FIX";
                 Load_UiUpdate();
             }
             else if(phptype.toString().equals("FIX"))
@@ -778,7 +862,25 @@ public class Tab2_addpoint extends Activity
                     }
                     else
                     {
-                        Toast.makeText(getBaseContext(), "프로필이 변경 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                        if(phptype.toString().equals("FIX"))
+                        {
+                            StopShow();
+                            Toast.makeText(getApplicationContext(), "포인트가 변경 되었습니다.", Toast.LENGTH_SHORT).show();
+                            if (mImageCaptureUri != null) {
+                                // 임시 파일 삭제
+                                File f = new File(mImageCaptureUri.getPath());
+                                if (f.exists()) {
+                                    f.delete();
+
+                                }
+                            }
+
+                            Intent intent = new Intent();
+                            intent.putExtra("fix_type", "true");
+                            setResult(1, intent);
+                        }
+
                         finish();
                     }
                 }
@@ -798,22 +900,45 @@ public class Tab2_addpoint extends Activity
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 기존 프로필 정보 UI 적용
     public void Load_UiUpdate()
     {
-
-        // 프로필 이미지 부분
-        if(!pointdata.get("user_profileimg").toString().equals("none"))
+        // 포인트 상태 (공개, 나만의)
+        if(pointdata.get("point_state").toString().equals("open"))
         {
-            Glide.with(this).load(appInfo.Get_Tab4_ProImgFTP_URL()+pointdata.get("user_profileimg")).centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(this)).into(addimg);
+            option_open.setChecked(true);
+            Select_type ="open";
+        }
+        else if(pointdata.get("point_state").toString().equals("closed"))
+        {
+            option_closed.setChecked(true);
+            Select_type ="closed";
+        }
+
+        // 포인트 이미지 부분
+        if(!pointdata.get("point_img").toString().equals("none"))
+        {
+            Glide.with(this).load(appInfo.Get_Tab2_PointimgFTP_URL()+pointdata.get("point_img")).centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(this)).into(addimg);
         }
         else
         {
-          //  Glide.with(this).load(R.drawable.profile_default).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(Proimg);
+            Glide.with(this).load(R.drawable.write_talkimg).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(addimg);
         }
 
-        // 닉네임 부분
-     //   edit_nickname.setText(pointdata.get("user_nickname").toString());
+        // 날짜 부분
+        adddate.setText(pointdata.get("point_time").toString());
+        edit_adddate = pointdata.get("point_time").toString();
 
-        // 이메일 부분
-      //  edit_email.setText(pointdata.get("user_email").toString());
+        //주소
+        add_address.setText(pointdata.get("point_address").toString());
+
+        //필드상황
+        adddatafield.setText(pointdata.get("point_datafield").toString());
+
+        //채비정보
+        adddatapreparation.setText(pointdata.get("point_datapreparation").toString());
+
+        //부가설명
+        adddataetc.setText(pointdata.get("point_dataetc").toString());
+
+
         StopShow();
     }
 
@@ -890,21 +1015,28 @@ public class Tab2_addpoint extends Activity
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
             dos.writeBytes("Content-Disposition: form-data; name=\"addtype\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(phptype);  // 로그인 아이디
+            dos.writeBytes(phptype);  // 변경 타입
             dos.writeBytes(lineEnd);
 
             //텍스트 올리기 (포인트 식별값)
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
             dos.writeBytes("Content-Disposition: form-data; name=\"pointidx\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(UploadPoint_idx);  // 디바이스 아이디
+            if(phptype.toString().equals("ADD"))
+            {
+                dos.writeBytes(UploadPoint_idx);  // 포인트 식별 아이디
+            }
+            else
+            {
+                dos.writeBytes(FixPoint_idx);  // 포인트 식별 아이디
+            }
             dos.writeBytes(lineEnd);
 
             //텍스트 올리기 (로그인 아이디)
             dos.writeBytes(twoHyphens + boundary + lineEnd); //필드 구분자 시작
             dos.writeBytes("Content-Disposition: form-data; name=\"loginID\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(AppInfo.MY_LOGINID);  // 디바이스 아이디
+            dos.writeBytes(AppInfo.MY_LOGINID);  // 로그인 아이디
             dos.writeBytes(lineEnd);
 
             //텍스트 올리기 (디바이스 아이디)
@@ -992,10 +1124,10 @@ public class Tab2_addpoint extends Activity
 
                         }
                     }
+
                     Intent intent = new Intent();
-                    intent.putExtra("updatecode","REFRASH");
-                    setResult(3,intent);
-                    // 프로세스 종료.
+                    intent.putExtra("fix_type", "true");
+                    setResult(1, intent);
 
                 }
                 else if(phptype.toString().equals("ADD"))
@@ -1017,6 +1149,7 @@ public class Tab2_addpoint extends Activity
                     // 프로세스 종료.
 
                 }
+
 
 
                 finish();
@@ -1053,16 +1186,25 @@ public class Tab2_addpoint extends Activity
                         if (mImageCaptureUri != null) {
                             // 임시 파일 삭제
                             File f = new File(mImageCaptureUri.getPath());
-                            if (f.exists())
-                            {
+                            if (f.exists()) {
                                 f.delete();
 
                             }
                         }
-                        Intent intent = new Intent();
-                        intent.putExtra("updatecode","REFRASH");
-                        setResult(3,intent);
-                        // 프로세스 종료.
+
+                        if(phptype.toString().equals("ADD"))
+                        {
+                            Intent intent = new Intent();
+                            intent.putExtra("updatecode", "REFRASH");
+                            setResult(3, intent);
+                            // 프로세스 종료.
+                        }
+                        else
+                        {
+                            Intent intent = new Intent();
+                            intent.putExtra("fix_type", "false");
+                            setResult(1, intent);
+                        }
                         finish();
                     }
                 })

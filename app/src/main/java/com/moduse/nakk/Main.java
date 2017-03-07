@@ -90,6 +90,8 @@ public class Main extends Activity
     BitmapDrawable tab3img;
     BitmapDrawable tab4img;
 
+    public static Activity mainAC;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -97,6 +99,7 @@ public class Main extends Activity
         setContentView(R.layout.main);
 
         MinContext = this;
+        mainAC= this;
 
         loading = new ProgressDialog(this);
         InitShow();
@@ -457,7 +460,7 @@ public class Main extends Activity
 
 ///////////////// 탭 1  부분 //////////////////////
  */
-
+    //  핀치 줌으로 이동
     public void View_ZoomImage(String imgurl)
     {
         Intent intent = new Intent(Main.this,View_img.class);
@@ -944,6 +947,9 @@ public class Main extends Activity
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
+
 
     // 프로그레스 설정
     public void InitShow()

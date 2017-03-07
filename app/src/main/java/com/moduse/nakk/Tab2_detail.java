@@ -48,6 +48,10 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class Tab2_detail extends Activity
 {
+
+    // 지도쪽 리플래시
+    Tab2_read tab2_read;
+
     //데이터
     AppInfo appInfo;
 
@@ -70,6 +74,9 @@ public class Tab2_detail extends Activity
     TextView  point_datapreparation;
     TextView  point_dataetc;
 
+    // 댓글 갯수
+    TextView mentnumText;
+
     LinearLayout fix_btn;
     LinearLayout delete_btn;
 
@@ -85,9 +92,10 @@ public class Tab2_detail extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab2_read);
 
+
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
-
+        tab2_read = new Tab2_read();
         InitShow();
 
         // 인텐트 데이터 불러오기
@@ -103,6 +111,8 @@ public class Tab2_detail extends Activity
         point_datapreparation = (TextView) findViewById(R.id.tab2_read_point_datapreparation);
         point_dataetc = (TextView) findViewById(R.id.tab2_read_point_dataetc);
 
+        mentnumText = (TextView) findViewById(R.id.tab2_ment_num);
+
         fix_btn = (LinearLayout) findViewById(R.id.tab2_read_fix_lin);
         delete_btn = (LinearLayout) findViewById(R.id.tab2_read_delete_lin);
 
@@ -112,18 +122,67 @@ public class Tab2_detail extends Activity
 
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////인텐트 REDULT
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    ////////////////////////////////////////////////////////////// 버튼 설정
+        if(requestCode == 1)
+        {
+            String tmpType = "";
+            tmpType = data.getStringExtra("fix_type");
+
+            if(tmpType.toString().equals("false"))
+            {
+                Toast.makeText(this,"수정을 취소했습니다.",Toast.LENGTH_SHORT).show();
+            }
+            else if(tmpType.toString().equals("true"))
+            {
+                Load_Point_detail();
+            }
+        }
+        if(requestCode == 2)
+        {
+            String tmpType = "";
+            tmpType = data.getStringExtra("fix_type");
+
+            if(tmpType.toString().equals("false"))
+            {
+               // Toast.makeText(this,"수정을 취소했습니다.",Toast.LENGTH_SHORT).show();
+            }
+            else if(tmpType.toString().equals("true"))
+            {
+                Load_Point_detail();
+            }
+        }
+
+    }
+
+        ////////////////////////////////////////////////////////////// 버튼 설정
     // 수정 버튼
     public void tab2_btn_read_fix(View v)
     {
-        Intent intent = new Intent(this, Tab2_addpoint.class);
-        intent.putExtra("type","FIX");
-        intent.putExtra("Point_idx",Load_PointIdx);
-        startActivity(intent);
 
-        Load_PointIdx ="";
-        finish();
+        Intent intent = new Intent(this, Tab2_addpoint.class);
+
+        intent.putExtra("point_type","FIX");
+        intent.putExtra("point_idx",String.valueOf(Load_PointIdx));
+
+        startActivityForResult(intent,2);
+
+      //  Load_PointIdx ="";
+       // finish();
+    }
+
+    // 멘트 엑티비티 실행
+    public void tab2_btn_mentopen(View v)
+    {
+        Intent intent = new Intent(this, Tab2_ment.class);
+        intent.putExtra("point_idx",String.valueOf(Load_PointIdx));
+        intent.putExtra("menter_loginID",pointdata.get("loginID").toString());
+        intent.putExtra("menter_deviceID",pointdata.get("deviceID").toString());
+
+        startActivityForResult(intent,1);
     }
 
     // 삭제 버튼
@@ -344,6 +403,7 @@ public class Tab2_detail extends Activity
                     String point_datapreparation_;
                     String point_dataetc_;
                     String point_img_;
+                    String ment_num_;
 
 
                     try {
@@ -365,6 +425,7 @@ public class Tab2_detail extends Activity
                             point_datapreparation_ = jo.getString("point_datapreparation");
                             point_dataetc_ = jo.getString("point_dataetc");
                             point_img_ = jo.getString("point_img");
+                            ment_num_ = jo.getString("ment_num");
 
                             pointdata.put("idx", idx_);
                             pointdata.put("loginID", loginID_);
@@ -377,6 +438,7 @@ public class Tab2_detail extends Activity
                             pointdata.put("point_datapreparation", point_datapreparation_);
                             pointdata.put("point_dataetc", point_dataetc_);
                             pointdata.put("point_img", point_img_);
+                            pointdata.put("ment_num", ment_num_);
 
                         }
 
@@ -432,6 +494,23 @@ public class Tab2_detail extends Activity
                 Glide.with(this).load(R.drawable.write_talkimg).centerCrop().bitmapTransform(new CropCircleTransformation(this)).into(point_img);
             }
 
+            // 핀치줌
+            point_img.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if(!pointdata.get("point_img").toString().equals("none"))
+                    {
+                        View_ZoomImage(appInfo.Get_Tab2_PointimgFTP_URL() + pointdata.get("point_img").toString());
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"기록된 사진이 없습니다.",Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
             point_time.setText(pointdata.get("point_time").toString());
             point_address.setText(pointdata.get("point_address").toString());
             point_datafield.setText(pointdata.get("point_datafield").toString());
@@ -448,17 +527,27 @@ public class Tab2_detail extends Activity
                 fix_btn.setVisibility(View.GONE);
                 delete_btn.setVisibility(View.GONE);
             }
+
+
+            // 멘트 갯수
+            mentnumText.setText(pointdata.get("ment_num").toString()+" ");
         }
         catch (Exception e)
         {
             Log.i("Exception",e.toString());
         }
 
-
         StopShow();
     }
 
+    //  핀치 줌으로 이동
+    public void View_ZoomImage(String imgurl)
+    {
+        Intent intent = new Intent(Tab2_detail.this,View_img.class);
+        intent.putExtra("ImuUrl",imgurl);
+        startActivity(intent);
 
+    }
 
     // 뒤로가기 (댓글창 닫기)
     @Override
@@ -472,7 +561,7 @@ public class Tab2_detail extends Activity
                 Intent intent = new Intent();
                 intent.putExtra("updatecode","REFRASH");
                 setResult(2,intent);
-                finish();
+                this.finish();
             }
             if( keyCode == KeyEvent.KEYCODE_HOME )
             {
@@ -480,7 +569,7 @@ public class Tab2_detail extends Activity
                 Intent intent = new Intent();
                 intent.putExtra("updatecode","REFRASH");
                 setResult(2,intent);
-                finish();
+                this.finish();
             }
         }
         return super.onKeyDown(keyCode, event);

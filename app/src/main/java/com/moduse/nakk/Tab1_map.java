@@ -570,6 +570,7 @@ public class Tab1_map extends Activity implements MapView.MapViewEventListener, 
     {
         loading.setProgress(ProgressDialog.STYLE_SPINNER);
         loading.setMessage("정보를 불러오는 중입니다..");
+        loading.setCanceledOnTouchOutside(false);   // 옆에 터치해도 안사라지게
     }
     public void SetmsgShow(String value)
     {

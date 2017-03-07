@@ -50,6 +50,8 @@
         <activity android:name=".Tab2_detail"/>
         <activity android:name=".Tab2_addpoint"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity android:name=".Tab2_ment"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity android:name=".Tab3_read"/>
         <activity android:name=".Tab4_read"/>
         <activity android:name=".View_img"/>
