@@ -996,7 +996,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
 
 
 
-
+/*
     @Override
     protected void onDestroy()
     {
@@ -1007,7 +1007,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
         overridePendingTransition(0, 0);
     }
-
+*/
 
     public void RefreshMap()
     {
