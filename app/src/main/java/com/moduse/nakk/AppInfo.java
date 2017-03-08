@@ -134,14 +134,19 @@ public class AppInfo extends Application
     private String DaumKey = "2f280f5013022107ebe4fcd0382e5b02";
 
     // 내 위치 정보
-    private double Latitude;    // 경도
-    private double Longitude;   // 위도
+    private double Latitude;    // 경도  // 사용 안함
+    private double Longitude;   // 위도 // 사용 안함
 
     // 내 푸시 상태 (ON/OFF)
     public static boolean Push_state = true;
 
     // MY 로그인 아이디
     public static String MY_LOGINID;
+
+    // MY 위치 정보 한번만 저장
+    public static boolean GPSSAVE = false;
+    public static double MY_Latitude = 0;    // 경도
+    public static double MY_Longitude = 0;    // 위도
 
 
     //디바이스 아이디 체크

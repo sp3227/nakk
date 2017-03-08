@@ -183,6 +183,24 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /// 비밀번호 찾기 이메일
+    public void login_sand_emmail(View v)
+    {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("plain/text");
+        String[] tos = {"jaybustu@gmail.com"};
+        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "[낚중일기] 비밀번호 재발급");
+        intent.putExtra(Intent.EXTRA_TEXT, "다음 양식을 기입하여 보내 주시면 가입하신 이메일로 임시 비밀번호를 발송해드립니다. " +
+                "\n\n " +
+                "가입 ID : \n"+
+                "가입 이메일 : \n"+
+                "가입 닉네임 : \n\n"+
+                "해당 항목을 작성하여 보내주시기 바랍니다."+
+                "\n\n\n\n-낚중일기-");
+        startActivity(intent);
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

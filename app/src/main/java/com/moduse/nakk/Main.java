@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,6 +49,7 @@ import java.util.Locale;
 public class Main extends Activity
 {
     public static Context MinContext;  // context 스테틱
+
 
     AppInfo appInfo;   // 데이터
     ProgressDialog loading;   // 프로그레스 설정
@@ -938,6 +940,8 @@ public class Main extends Activity
                             // 예 버튼 클릭시 설정
                             public void onClick(DialogInterface dialogInterface, int i)
                             {
+                                // 프로세스 종료.
+                                ActivityCompat.finishAffinity(Main.mainAC);
                                 finish();
                             }
                         })

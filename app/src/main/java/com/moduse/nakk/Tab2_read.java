@@ -13,7 +13,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -126,6 +128,8 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab2);
 
+        getWindow().setWindowAnimations(0);
+
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
         InitShow();
@@ -152,6 +156,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
         if(!isGPSEnabled)
         {
             // GPS가 꺼져있을 시 앱이 수행할 작업 코드
+            AppInfo.GPSSAVE = false;
             Toast.makeText(this,"GPS가 꺼져있습니다. 확인해주세요.",Toast.LENGTH_SHORT).show();
             DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
 
@@ -214,11 +219,8 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             public void onClick(View view)
             {
                 ((Main)Main.MinContext).ftn_Tab_1();
-                DaumLaout.removeAllViews();
-                mapView.onPause();
-                mapView.clearFocus();
-                overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -236,11 +238,8 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             public void onClick(View view)
             {
                 ((Main)Main.MinContext).ftn_Tab_3();
-                DaumLaout.removeAllViews();
-                mapView.onPause();
-                mapView.clearFocus();
-                overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -250,11 +249,8 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             public void onClick(View view)
             {
                 ((Main)Main.MinContext).ftn_Tab_4();
-                DaumLaout.removeAllViews();
-                mapView.onPause();
-                mapView.clearFocus();
-                overridePendingTransition(0, 0);
                 finish();
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -266,16 +262,17 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     // (버튼)자기 위치로 포커스 이동 시키기
     public void tab2_btn_LocationReset(View v)
     {
-        if(isGPSEnabled)
+        if(isGPSEnabled && AppInfo.GPSSAVE)
         {
-            double Latitude = appInfo.Get_Latitude();
-            double Longitude = appInfo.Get_Longitude();
+             double Latitude = AppInfo.MY_Latitude;
+             double Longitude = AppInfo.MY_Longitude;
 
-            mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Latitude, Longitude), 5, true); // 지도 중심점 자기 위치로 변경  // 줌레벨
+             mapView.setMapCenterPointAndZoomLevel(MapPoint.mapPointWithGeoCoord(Latitude, Longitude), 5, true); // 지도 중심점 자기 위치로 변경  // 줌레벨
         }
         else
         {
-            Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정을 확인해주세요.", Toast.LENGTH_SHORT).show();
+            AppInfo.GPSSAVE = false;
+            Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정후 재실행 해주세요.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -360,6 +357,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     public void My_locationinit(int type)  // MY GPS 받아오기
     {
         StartShow();
+        AppInfo.GPSSAVE = true;
 
         switch (type) {
             case GPS_START: {
@@ -368,8 +366,18 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
                         @Override
                         public void onLocationChanged(Location location) {
                             //status.setText("위도: "+ location.getLatitude() + "\n경도: " + location.getLongitude() + "\n고도: " + location.getAltitude());
-                            appInfo.Set_Latitude(location.getLatitude());
-                            appInfo.Set_Longitude(location.getLongitude());
+                            if(!AppInfo.GPSSAVE)
+                            {
+
+                            }
+                            else
+                            {
+                                AppInfo.MY_Latitude = location.getLatitude();
+                                AppInfo.MY_Longitude = location.getLongitude();
+
+                            }
+                            //appInfo.Set_Latitude(location.getLatitude());
+                            //appInfo.Set_Longitude(location.getLongitude());
 
                             // 위치 정보를 가져올 수 있는 메소드입니다.
                             // 위치 이동이나 시간 경과 등으로 인해 호출됩니다.
@@ -400,8 +408,8 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
                 }
                 else if (!isGPSEnabled)
                 {
-                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정을 확인해주세요.", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정후 재실행 해주세요.", Toast.LENGTH_SHORT).show();
+                    AppInfo.GPSSAVE = false;
                     DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
                 }
                 break;
@@ -436,7 +444,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
 
                     //locationManager.removeUpdates(locationListener);  // GPS 닫기
                 } else if (!isGPSEnabled) {
-                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.getApplicationContext(), "위치를 찾을 수 없습니다. GPS설정후 재실행 해주세요.", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
@@ -604,9 +612,15 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     @Override
     public void onMapViewInitialized(MapView mapView)  // 맵 초기 설정
     {
+        try
+        {
+            Load_Point();  // 포인트 불러오기  PHP 통신
+        }
+        catch (Exception e)
+        {
+        }
 
-        Load_Point();  // 포인트 불러오기  PHP 통신
-        if(isGPSEnabled) {
+        if (isGPSEnabled) {
             locationManager.removeUpdates(locationListener);  // GPS 닫기
         }
         StopShow();
@@ -696,11 +710,48 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem)  // 포인트 아이콘 클릭하고 올라오는 팝업 클릭했을때
     {
        // Toast.makeText(this,""+mapPOIItem.getTag(),Toast.LENGTH_SHORT).show();
+        if(Select_item != null)
+        {
+            if(mapPOIItem.getTag() == 0)
+            {
+                Intent intent = new Intent(this, Tab2_addpoint.class);
 
-        Intent intent = new Intent(this, Tab2_detail.class);
-        intent.putExtra("Point_idx",""+mapPOIItem.getTag());
+                intent.putExtra("point_type","ADD");
+                intent.putExtra("point_latitude",Select_Point_latitude);
+                intent.putExtra("point_longitude",Select_Point_longitude);
+                intent.putExtra("point_address",Select_Point_adress);
 
-        startActivityForResult(intent,2);
+                startActivityForResult(intent,3);
+            }
+            else
+            {
+                Intent intent = new Intent(this, Tab2_detail.class);
+                intent.putExtra("Point_idx", "" + mapPOIItem.getTag());
+
+                startActivityForResult(intent, 2);
+            }
+        }
+        else
+        {
+            if(mapPOIItem.getTag() == 0)
+            {
+                Intent intent = new Intent(this, Tab2_addpoint.class);
+
+                intent.putExtra("point_type","ADD");
+                intent.putExtra("point_latitude",Select_Point_latitude);
+                intent.putExtra("point_longitude",Select_Point_longitude);
+                intent.putExtra("point_address",Select_Point_adress);
+
+                startActivityForResult(intent,3);
+            }
+            else
+            {
+                Intent intent = new Intent(this, Tab2_detail.class);
+                intent.putExtra("Point_idx", "" + mapPOIItem.getTag());
+
+                startActivityForResult(intent, 2);
+            }
+        }
     }
 
     @Override
@@ -911,13 +962,16 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
             String nickname__;
 
             if (str.toString().equals("CHARFALSE")) {
-                Toast.makeText(getApplicationContext(), "서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "인터넷 환경이 불안정 합니다. (앱 재실행 권장)1", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
                 finish();
 
             }
             else if (str.toString().equals("sql_error"))
             {
-                Toast.makeText(getApplicationContext(), "서버 접속이 불안정 합니다. 잠시후 다시 시도 해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "인터넷 환경이 불안정 합니다. (앱 재실행 권장)2", Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -995,20 +1049,51 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     }
 
 
+    @Override
+    public void onBackPressed() {
+        return;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            //하드웨어 뒤로가기 버튼에 따른 이벤트 설정
+            case KeyEvent.KEYCODE_BACK:
+
+                new AlertDialog.Builder(this)
+                        .setTitle("[앱 종료]") // 제목 설정
+                        .setMessage("낚중일기를 종료 하시겠습니까?")
+                        .setCancelable(false)  //뒤로 버튼 클릭시 취소 설정
+                        .setNegativeButton("예", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 프로세스 종료.
+                                ActivityCompat.finishAffinity(Main.mainAC);
+                                finish();
+                            }
+                        })
+                        .setPositiveButton("아니오", null)
+                        .show();
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
 
 /*
+
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
 
-        listItem.clear();
-        DaumLaout.removeAllViews();
-        DaumMap_Strat(AppInfo.Select_MapType);  // 다음맵 시작(맵타입)
-        overridePendingTransition(0, 0);
     }
-*/
 
+*/
     public void RefreshMap()
     {
         mapView.removePOIItems(mapView.getPOIItems());
@@ -1023,7 +1108,7 @@ public class Tab2_read extends Activity implements MapView.MapViewEventListener,
     public void InitShow()
     {
         loading.setProgress(ProgressDialog.STYLE_SPINNER);
-        loading.setMessage("정보를 불러오는 중입니다..");
+        loading.setMessage("정보를 불러오는 중입니다..\n(지도가 느려요..)\n\n조금만 기다려 주세요^^)");
         loading.setCanceledOnTouchOutside(false);
     }
     public void SetmsgShow(String value)

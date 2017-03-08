@@ -590,7 +590,7 @@ public class Tab2_ment extends Activity
                 holder.View_data.setText(data.GET_ment_data());
 
                 //삭제 버튼 부분
-                if(data.GET_menter_loginID().equals(put_loginID))
+                if(data.GET_menter_loginID().equals(AppInfo.MY_LOGINID))
                 {
                     holder.View_btn_delete.setVisibility(View.VISIBLE);
 
