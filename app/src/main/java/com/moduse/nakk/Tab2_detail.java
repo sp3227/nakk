@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -91,7 +90,6 @@ public class Tab2_detail extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab2_read);
-
 
         appInfo = new AppInfo();
         loading = new ProgressDialog(this);
@@ -460,7 +458,7 @@ public class Tab2_detail extends Activity
                     intent.putExtra("updatecode","REFRASH");
                     setResult(2,intent);
 
-                    finish();
+                    finishAfterTransition();
                 }
                 else if (result.toString().equals("CHARFALSE"))
                 {
@@ -551,28 +549,14 @@ public class Tab2_detail extends Activity
 
     // 뒤로가기 (댓글창 닫기)
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public void onBackPressed() {
+        Log.i("Back","true");
+        Load_PointIdx = "";
+        Intent intent = new Intent();
+        intent.putExtra("updatecode", "REFRASH");
+        setResult(2, intent);
 
-        if( event.getAction() == KeyEvent.ACTION_DOWN )
-        {
-            if( keyCode == KeyEvent.KEYCODE_BACK )
-            {
-                Load_PointIdx = "";
-                Intent intent = new Intent();
-                intent.putExtra("updatecode","REFRASH");
-                setResult(2,intent);
-                this.finish();
-            }
-            if( keyCode == KeyEvent.KEYCODE_HOME )
-            {
-                Load_PointIdx = "";
-                Intent intent = new Intent();
-                intent.putExtra("updatecode","REFRASH");
-                setResult(2,intent);
-                this.finish();
-            }
-        }
-        return super.onKeyDown(keyCode, event);
+        finishAfterTransition();
     }
 
 

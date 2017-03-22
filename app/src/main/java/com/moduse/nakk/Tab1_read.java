@@ -657,16 +657,16 @@ public class Tab1_read extends Activity
             if(data != null)
             {
                 // 자랑하기 이미지 부분
-                if(data.GET_talk_img().equals("none") || data.GET_talk_img() == "" || data.GET_talk_img() == null)
+                if(data.GET_talk_img().equals("http://nakk20.raonnet.com/talkimg/none"))
                 {
-                   // holder.View_img.setVisibility(View.INVISIBLE);
+                    holder.View_img.setVisibility(View.GONE);
                 }
                 else
                 {
                     // 이미지 있음
-                   // holder.View_img.setVisibility(View.VISIBLE);
+                    holder.View_img.setVisibility(View.VISIBLE);
 
-                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).dontAnimate().diskCacheStrategy(DiskCacheStrategy.NONE).crossFade().thumbnail(0.5f).into(holder.View_img);
+                     Glide.with(convertView.getContext()).load(data.GET_talk_img()).centerCrop().dontAnimate().diskCacheStrategy(DiskCacheStrategy.RESULT).thumbnail(0.5f).into(holder.View_img);
 
                     // 사진 클릭 리스너
                     holder.View_img.setOnClickListener(new ImageView.OnClickListener()
@@ -805,7 +805,7 @@ public class Tab1_read extends Activity
                 if(data.GET_user_profile().equals("none"))
                 {
 
-                    Glide.with(convertView.getContext()).load(R.drawable.profile_default).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
+                    Glide.with(convertView.getContext()).load(R.drawable.profile_default).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
 
                         // 사진 클릭 리스너(사진 없음)
                     holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()
@@ -821,7 +821,7 @@ public class Tab1_read extends Activity
                 {
                     // 이미지 있음
 
-                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
+                    Glide.with(convertView.getContext()).load(data.GET_user_profile()).dontAnimate().centerCrop().diskCacheStrategy(DiskCacheStrategy.RESULT).bitmapTransform(new CropCircleTransformation(convertView.getContext())).thumbnail(0.1f).into(holder.View_user_profile);
 
                         // 사진 클릭 리스너(사진 있음)
                     holder.View_user_profile.setOnClickListener(new ImageView.OnClickListener()

@@ -70,33 +70,39 @@ public class Tab4_fixbase extends Activity
     // 푸시 스위치
     public void PushSwitch()
     {
-        setting = getSharedPreferences("setting", 0);  // 로컬 세팅값 불러오기 & 저장하기
-        editor= setting.edit();
+        try {
+            setting = getSharedPreferences("setting", 0);  // 로컬 세팅값 불러오기 & 저장하기
+            editor= setting.edit();
 
-        push_value = AppInfo.Push_state;
+            push_value = AppInfo.Push_state;
 
-        push_box.setChecked(push_value);
+            push_box.setChecked(push_value);
 
-        push_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            push_box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
             {
-                if(isChecked)
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
                 {
-                    push_value = true;
-                    editor.putBoolean("PUSH_STATE", true);
-                    AppInfo.Push_state = true;
+                    if(isChecked)
+                    {
+                        push_value = true;
+                        editor.putBoolean("PUSH_STATE", push_value);
+                        AppInfo.Push_state = true;
+                    }
+                    else
+                    {
+                        push_value = false;
+                        editor.putBoolean("PUSH_STATE", push_value);
+                        AppInfo.Push_state = false;
+                    }
+                    editor.commit();
                 }
-                else
-                {
-                    push_value = false;
-                    editor.putBoolean("PUSH_STATE", false);
-                    AppInfo.Push_state = false;
-                }
-                editor.commit();
-            }
-        });
+            });
+        }
+       catch (Exception e)
+       {
+
+       }
     }
 
     // 탈퇴하기

@@ -116,23 +116,63 @@ public class Login extends AppCompatActivity {
         }
 
         // 로그인 부분 불러오기 (로컬)
-        AppInfo.Push_state = !setting.getBoolean("PUSH_STATE", false);
+        AppInfo.Push_state = setting.getBoolean("PUSH_STATE", true);
 
         user_id.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                user_id.setText(null);
+                //user_id.setText(null);
             }
         });
 
-        user_pass.setOnClickListener(new View.OnClickListener() {
+
+        user_pass.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View v)
+            public boolean onKey(View v, int keyCode, KeyEvent event)
             {
-                user_pass.setText(null);
+                //엔터키
+                if (keyCode == KeyEvent.KEYCODE_ENTER)
+                {
+                    StartShow();
+                    String id = user_id.getText().toString();
+                    String pass = user_pass.getText().toString();
+
+                    //키보드 내림
+                    imm.hideSoftInputFromWindow(user_pass.getWindowToken(),0);
+
+                    // php 함수 호출
+                    Login_user(id,pass,token,appInfo.Get_LoginURL());
+
+                    if(loginsave.isChecked())
+                    {
+                        setting = getSharedPreferences("setting",0);
+
+                        editor.putString("ID", id);
+                        editor.putString("PW", pass);
+                        editor.putBoolean("Auto_Login_enabled", true);
+                        editor.commit();
+                    }
+                    else
+                    {
+                        /**
+                         * remove로 지우는것은 부분삭제
+                         * clear로 지우는것은 전체 삭제 입니다
+                         */
+//					editor.remove("ID");
+//					editor.remove("PW");
+//					editor.remove("Auto_Login_enabled");
+                        editor.clear();
+                        editor.commit();
+                    }
+
+                    return true;
+                }
+
+                return false;
             }
         });
+
 
         gcm = GoogleCloudMessaging.getInstance(this);
         Pushtoken();
